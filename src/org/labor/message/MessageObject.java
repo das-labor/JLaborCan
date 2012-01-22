@@ -1,17 +1,15 @@
 package org.labor.message;
 
-public abstract class Message {
+public abstract class MessageObject {
 
-    protected final int length;
     protected final byte[] data;
 
-    public Message(int length, byte payload[]) {
-        this.length = length;
+    public MessageObject(byte payload[]) {
         this.data = payload;
     }
 
     public int getLength() {
-        return length;
+        return data!=null?data.length:0;
     }
 
     public byte[] getPayload() {

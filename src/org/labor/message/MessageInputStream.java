@@ -1,6 +1,8 @@
 package org.labor.message;
 
-public interface MessageInputStream<T extends Message> {
+import java.io.IOException;
 
-    public T read();
+public interface MessageInputStream<T extends MessageObject> {
+
+    public T read() throws IOException;
 }

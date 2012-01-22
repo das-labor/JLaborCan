@@ -3,9 +3,9 @@ package org.labor.message;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class MessageWriter<T extends Message> implements MessageOutputStream<T> {
+public class MessageWriter<T extends MessageObject> implements MessageOutputStream<T> {
 
-    OutputStream sink;
+    final OutputStream sink;
 
     public MessageWriter(OutputStream out) {
         sink = out;

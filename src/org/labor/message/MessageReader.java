@@ -1,18 +1,19 @@
 package org.labor.message;
 
+import java.io.IOException;
 import java.io.InputStream;
 
-public final class MessageReader<T extends Message> implements MessageInputStream<T> {
+public final class MessageReader<T extends MessageObject> implements MessageInputStream<T> {
 
-    MessageFactory<T> factory;
-    InputStream source;
+    final MessageFactory<T> factory;
+    final InputStream source;
 
     public MessageReader(MessageFactory<T> mf, InputStream in) {
         factory = mf;
         source = in;
     }
 
-    public T read() {
+    public T read() throws IOException {
         return factory.assemble(source);
     }
 }
