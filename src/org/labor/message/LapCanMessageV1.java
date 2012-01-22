@@ -1,4 +1,7 @@
-package org.labor.can.message;
+package org.labor.message;
+
+import org.labor.message.Message;
+import org.labor.can.RawCanMessage;
 
 /**
  *
@@ -24,14 +27,14 @@ package org.labor.can.message;
  *
  * @author hansinator
  */
-public class LapCanMessageV1 extends BaseCanMessage {
+public class LapCanMessageV1 extends Message {
 
     private final byte srcAddr;
     private final byte dstAddr;
     private final byte srcPort;
     private final byte dstPort;
 
-    public LapCanMessageV1(byte srcAddr, byte srcPort, byte dstAddr, byte dstPort, byte length, byte[] data) {
+    public LapCanMessageV1(byte srcAddr, byte srcPort, byte dstAddr, byte dstPort, int length, byte[] data) {
         super(length, data);
         
         this.srcAddr = srcAddr;
@@ -48,7 +51,7 @@ public class LapCanMessageV1 extends BaseCanMessage {
         byte srcPort = (byte)((id & 0xFF) >> 2);
         byte dstPort = (byte)(((id & 0x03) << 4) | ((id & 0x0C00) >> 11) | ((id & 0x0300) >> 8));
 
-        return new LapCanMessageV1(srcAddr, srcPort, dstAddr, dstPort, msg.getLength(), msg.getData());
+        return new LapCanMessageV1(srcAddr, srcPort, dstAddr, dstPort, msg.getLength(), msg.getPayload());
     }
 
     public RawCanMessage toRawCanMessage() {
@@ -72,5 +75,10 @@ public class LapCanMessageV1 extends BaseCanMessage {
 
     public byte getSrcPort() {
         return srcPort;
+    }
+
+    @Override
+    public byte[] encode() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

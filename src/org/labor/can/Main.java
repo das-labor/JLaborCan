@@ -1,7 +1,5 @@
 package org.labor.can;
 
-import java.io.InputStream;
-
 /**
  *
  * @author hansinator

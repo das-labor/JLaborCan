@@ -1,10 +1,8 @@
-package org.labor.can.io;
+package org.labor.can;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import org.labor.can.message.BaseCanMessage;
-import org.labor.can.message.RawCanMessage;
 
 /**
  *
@@ -31,7 +29,7 @@ public class RawCanMessageInputStream extends InputStream {
     RawCanMessage readRawCanMessage() throws IOException {
         int id;
         byte length;
-        byte[] rawData = new byte[BaseCanMessage.DATA_MAX_LENGTH + HEADER_LEN];
+        byte[] rawData = new byte[RawCanMessage.DATA_MAX_LENGTH + HEADER_LEN];
 
         if(sourceStream.read(rawData, 0, HEADER_LEN) != HEADER_LEN){
             throw new IOException("Unexpected end of stream.");
@@ -39,7 +37,7 @@ public class RawCanMessageInputStream extends InputStream {
 
         length = rawData[BYTE_POS_LEN];
 
-        if(length > BaseCanMessage.DATA_MAX_LENGTH || length < 0) {
+        if(length > RawCanMessage.DATA_MAX_LENGTH || length < 0) {
             throw new IOException("Invalid packet length.");
         }
 

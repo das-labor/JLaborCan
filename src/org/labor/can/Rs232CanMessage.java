@@ -1,11 +1,13 @@
-package org.labor.can.message;
+package org.labor.can;
+
+import org.labor.can.RawCanMessage;
 
 /**
  *
  * @author hansinator
  */
 public class Rs232CanMessage {
-    public static final int DATA_MAX_LENGTH = BaseCanMessage.DATA_MAX_LENGTH + 5;
+    public static final int DATA_MAX_LENGTH = RawCanMessage.DATA_MAX_LENGTH + 5;
     protected final byte length;
     protected final byte data[];
     private final byte cmd;

@@ -1,22 +1,29 @@
-package org.labor.can.message;
+package org.labor.can;
 
-import java.util.Arrays;
+import org.labor.message.Message;
 
 /**
  *
  * @author hansinator
  */
-public class RawCanMessage extends BaseCanMessage {
+public class RawCanMessage extends Message {
     
+    public static int DATA_MAX_LENGTH = 8;
+
     private final int id;
 
-    public RawCanMessage(int id, byte length, byte data[]) {
+    public RawCanMessage(int id, int length, byte data[]) {
         super(length, data);
         this.id = id;
     }
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public byte[] encode() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -41,6 +48,4 @@ public class RawCanMessage extends BaseCanMessage {
         hash = 53 * hash + super.hashCode();
         return hash;
     }
-
-
 }
