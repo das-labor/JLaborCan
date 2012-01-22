@@ -20,7 +20,7 @@ public class Main {
         InputStream in = new ByteArrayInputStream(new byte[0]);
         MessageInputStream<CANTCPMessage> tcpin = new MessageReader<CANTCPMessage>(CANTCPMessage.factory, in);
         MessageInputStream<CANMessage> canin = new MessageInputAdapter<CANTCPMessage, CANMessage>(CANMessage.factory, tcpin);
-        MessageInputStream<LAPMessage> lapin = new MessageInputAdapter<CANMessage, LAPMessage>(LAPMessage.factory, canin);
+        MessageInputStream<LAPMessage> lapin = new LAPMessage.CANMessageInputAdapter(canin);
         LAPMessage msg = lapin.read();
     }
 }

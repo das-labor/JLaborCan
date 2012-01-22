@@ -3,7 +3,9 @@ package org.labor.can;
 import java.io.IOException;
 import java.io.InputStream;
 import org.labor.message.MessageFactory;
+import org.labor.message.MessageInputStream;
 import org.labor.message.MessageObject;
+import org.labor.message.MessageOutputStream;
 
 /**
  *
@@ -86,7 +88,34 @@ public class LAPMessage extends MessageObject {
     public final static MessageFactory<LAPMessage> factory = new MessageFactory<LAPMessage>() {
 
         public LAPMessage assemble(InputStream in) throws IOException {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return LAPMessage.fromCANMessage(CANMessage.factory.assemble(in));
         }
     };
+
+    public static class CANMessageInputAdapter implements MessageInputStream<LAPMessage> {
+
+        final MessageInputStream<CANMessage> source;
+
+        public CANMessageInputAdapter(MessageInputStream<CANMessage> in) {
+            source = in;
+        }
+
+        public LAPMessage read() throws IOException {
+            return LAPMessage.fromCANMessage(source.read());
+        }
+    }
+    
+    public static class CANMessageOutputAdapter implements MessageOutputStream<LAPMessage> {
+
+        final MessageOutputStream<CANMessage> sink;
+
+        public CANMessageOutputAdapter(MessageOutputStream<CANMessage> out) {
+            sink = out;
+        }
+
+        public void write(LAPMessage message) throws IOException {
+            sink.write(message.toCANMessage());
+        }
+
+    }
 }
