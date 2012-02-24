@@ -3,32 +3,8 @@ package org.labor.can;
 import java.io.IOException;
 import java.io.InputStream;
 import org.labor.message.MessageFactory;
-import org.labor.message.MessageInputStream;
-import org.labor.message.MessageObject;
-import org.labor.message.MessageOutputStream;
 
 /**
- *
- * Raw Binary Packet Format:
- *
- * Byte 1
- *  2..7 -> port src 0..5
- *  0..1 -> port dst 4..5
- *
- * Byte 2
- *  5..6 -> port dst 2..3
- *  0..1 -> port dst 0..1
- *
- * Byte 3 -> source addr
- * 
- * Byte 4 -> dest addr
- *
- * Byte 5
- *  0..3 -> len
- *
- * Byte 6..13 -> data
- *
- *
  * @author hansinator
  */
 public class LAPMessage extends CANMessage {
@@ -39,10 +15,10 @@ public class LAPMessage extends CANMessage {
     private final byte dstPort;
 
     public LAPMessage(byte srcAddr, byte srcPort, byte dstAddr, byte dstPort, byte[] data, boolean remote) {
-        super((((srcPort & 0x1F) << 2) | ((dstPort & 0x30) >> 4)
-                | ((int) (((dstPort & 0x0C) << 3) | (dstPort & 0x03)) << 8)
-                | ((int) srcAddr << 16)
-                | ((int) dstAddr << 24)), data, remote);
+        super(((srcPort & 0x3F) << 23) | ((dstPort & 0x30) << 17)
+                | ((int) ((dstPort & 0x0F) << 16)
+                | ((int) srcAddr << 8)
+                | (int) dstAddr), data, remote);
 
         this.srcAddr = srcAddr;
         this.dstAddr = dstAddr;
