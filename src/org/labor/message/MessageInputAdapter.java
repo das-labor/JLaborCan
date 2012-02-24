@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 public class MessageInputAdapter<I extends MessageObject, O extends MessageObject> implements MessageInputStream<O> {
+
     final MessageFactory<O> factory;
     final MessageInputStream source;
 
@@ -13,8 +14,10 @@ public class MessageInputAdapter<I extends MessageObject, O extends MessageObjec
     }
 
     public O read() throws IOException {
-        return factory.assemble(new ByteArrayInputStream(source.read().getPayload()));
+        byte[] data;
+        do {
+            data = source.read().getPayload();
+        } while (data == null);
+        return factory.assemble(new ByteArrayInputStream(data));
     }
-    
-    
 }

@@ -17,8 +17,8 @@ public class CANMessage extends MessageObject {
     private final static int HEADER_LEN = 5;
     private final static int BYTE_POS_LEN = 4;
     private final static int BYTE_POS_ID = 0;
-    private final int id;
-    private final boolean remote;
+    protected final int id;
+    protected final boolean remote;
 
     public CANMessage(int id, byte data[], boolean remote) {
         super(data);
@@ -41,21 +41,26 @@ public class CANMessage extends MessageObject {
     public final static MessageFactory<CANMessage> factory = new MessageFactory<CANMessage>() {
 
         public CANMessage assemble(InputStream in) throws IOException {
-            int id;
+            int id, ret, off = 0;
             byte length;
             byte[] rawData = new byte[DATA_MAX_LENGTH + HEADER_LEN];
 
-            if (in.read(rawData, 0, HEADER_LEN) != HEADER_LEN) {
-                throw new IOException("enexpected end of stream");
+            while (off < HEADER_LEN)
+            {
+                ret = in.read(rawData, off, HEADER_LEN - off);
+                if (ret < 0) {
+                    throw new IOException("unexpected end of stream");
+                }
+                off += ret;
             }
 
             length = rawData[BYTE_POS_LEN];
 
-            if (length > CANMessage.DATA_MAX_LENGTH || length < 0) {
+            if (length > DATA_MAX_LENGTH || length < 0) {
                 throw new IOException("invalid packet length");
             }
 
-            if (in.read(rawData, HEADER_LEN, length) != length) {
+            if (length != 0 && in.read(rawData, off, length) != length) {
                 throw new IOException("unexpected end of stream");
             }
 

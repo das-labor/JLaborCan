@@ -31,38 +31,23 @@ import org.labor.message.MessageOutputStream;
  *
  * @author hansinator
  */
-public class LAPMessage extends MessageObject {
+public class LAPMessage extends CANMessage {
 
     private final byte srcAddr;
     private final byte dstAddr;
     private final byte srcPort;
     private final byte dstPort;
 
-    public LAPMessage(byte srcAddr, byte srcPort, byte dstAddr, byte dstPort, byte[] data) {
-        super(data);
+    public LAPMessage(byte srcAddr, byte srcPort, byte dstAddr, byte dstPort, byte[] data, boolean remote) {
+        super((((srcPort & 0x1F) << 2) | ((dstPort & 0x30) >> 4)
+                | ((int) (((dstPort & 0x0C) << 3) | (dstPort & 0x03)) << 8)
+                | ((int) srcAddr << 16)
+                | ((int) dstAddr << 24)), data, remote);
 
         this.srcAddr = srcAddr;
         this.dstAddr = srcAddr;
         this.srcPort = srcPort;
         this.dstPort = dstPort;
-    }
-
-    public static LAPMessage fromCANMessage(CANMessage msg) {
-        int id = msg.getId();
-
-        byte srcAddr = (byte) ((id >> 16) & 0xFF);
-        byte dstAddr = (byte) ((id >> 24) & 0xFF);
-        byte srcPort = (byte) ((id & 0xFF) >> 2);
-        byte dstPort = (byte) (((id & 0x03) << 4) | ((id & 0x0C00) >> 11) | ((id & 0x0300) >> 8));
-
-        return new LAPMessage(srcAddr, srcPort, dstAddr, dstPort, msg.getPayload());
-    }
-
-    public CANMessage toCANMessage() {
-        return new CANMessage((((srcPort & 0x1F) << 2) | ((dstPort & 0x30) >> 4)
-                | ((int) (((dstPort & 0x0C) << 3) | (dstPort & 0x03)) << 8)
-                | ((int) srcAddr << 16)
-                | ((int) dstAddr << 24)), data, false);
     }
 
     public byte getDstAddr() {
@@ -80,42 +65,16 @@ public class LAPMessage extends MessageObject {
     public byte getSrcPort() {
         return srcPort;
     }
-
-    @Override
-    public byte[] encode() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
     public final static MessageFactory<LAPMessage> factory = new MessageFactory<LAPMessage>() {
 
         public LAPMessage assemble(InputStream in) throws IOException {
-            return LAPMessage.fromCANMessage(CANMessage.factory.assemble(in));
+            CANMessage msg = CANMessage.factory.assemble(in);
+            byte srcAddr = (byte) ((msg.id >> 16) & 0xFF);
+            byte dstAddr = (byte) ((msg.id >> 24) & 0xFF);
+            byte srcPort = (byte) ((msg.id & 0xFF) >> 2);
+            byte dstPort = (byte) (((msg.id & 0x03) << 4) | ((msg.id & 0x0C00) >> 11) | ((msg.id & 0x0300) >> 8));
+
+            return new LAPMessage(srcAddr, srcPort, dstAddr, dstPort, msg.getPayload(), msg.remote);
         }
     };
-
-    public static class CANMessageInputAdapter implements MessageInputStream<LAPMessage> {
-
-        final MessageInputStream<CANMessage> source;
-
-        public CANMessageInputAdapter(MessageInputStream<CANMessage> in) {
-            source = in;
-        }
-
-        public LAPMessage read() throws IOException {
-            return LAPMessage.fromCANMessage(source.read());
-        }
-    }
-    
-    public static class CANMessageOutputAdapter implements MessageOutputStream<LAPMessage> {
-
-        final MessageOutputStream<CANMessage> sink;
-
-        public CANMessageOutputAdapter(MessageOutputStream<CANMessage> out) {
-            sink = out;
-        }
-
-        public void write(LAPMessage message) throws IOException {
-            sink.write(message.toCANMessage());
-        }
-
-    }
 }
