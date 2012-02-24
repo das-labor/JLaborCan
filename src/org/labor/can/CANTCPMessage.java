@@ -27,7 +27,11 @@ public class CANTCPMessage extends MessageObject {
 
     @Override
     public byte[] encode() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        byte[] rawData = new byte[data.length + HEADER_LEN];
+        rawData[0] = (byte) data.length;
+        rawData[1] = cmd;
+        System.arraycopy(data, 0, rawData, HEADER_LEN, data.length);
+        return rawData;
     }
     public final static MessageFactory<CANTCPMessage> factory = new MessageFactory<CANTCPMessage>() {
 
