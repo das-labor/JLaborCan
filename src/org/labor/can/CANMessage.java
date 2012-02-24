@@ -36,7 +36,15 @@ public class CANMessage extends MessageObject {
 
     @Override
     public byte[] encode() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        byte[] rawData = new byte[data.length + HEADER_LEN];
+
+        rawData[BYTE_POS_ID] = (byte) (id & 0xFF);
+        rawData[BYTE_POS_ID + 1] = (byte) ((id >> 8) & 0xFF);
+        rawData[BYTE_POS_ID + 2] = (byte) ((id >> 16) & 0xFF);
+        rawData[BYTE_POS_ID + 3] = (byte) ((id >> 24) & 0xFF);
+        rawData[BYTE_POS_LEN] = (byte) data.length;
+        System.arraycopy(data, 0, rawData, HEADER_LEN, data.length);
+        return rawData;
     }
     public final static MessageFactory<CANMessage> factory = new MessageFactory<CANMessage>() {
 
@@ -45,8 +53,7 @@ public class CANMessage extends MessageObject {
             byte length;
             byte[] rawData = new byte[DATA_MAX_LENGTH + HEADER_LEN];
 
-            while (off < HEADER_LEN)
-            {
+            while (off < HEADER_LEN) {
                 ret = in.read(rawData, off, HEADER_LEN - off);
                 if (ret < 0) {
                     throw new IOException("unexpected end of stream");
