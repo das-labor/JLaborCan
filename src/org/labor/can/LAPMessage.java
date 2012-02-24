@@ -45,7 +45,7 @@ public class LAPMessage extends CANMessage {
                 | ((int) dstAddr << 24)), data, remote);
 
         this.srcAddr = srcAddr;
-        this.dstAddr = srcAddr;
+        this.dstAddr = dstAddr;
         this.srcPort = srcPort;
         this.dstPort = dstPort;
     }
@@ -69,10 +69,10 @@ public class LAPMessage extends CANMessage {
 
         public LAPMessage assemble(InputStream in) throws IOException {
             CANMessage msg = CANMessage.factory.assemble(in);
-            byte srcAddr = (byte) ((msg.id >> 16) & 0xFF);
-            byte dstAddr = (byte) ((msg.id >> 24) & 0xFF);
-            byte srcPort = (byte) ((msg.id & 0xFF) >> 2);
-            byte dstPort = (byte) (((msg.id & 0x03) << 4) | ((msg.id & 0x0C00) >> 11) | ((msg.id & 0x0300) >> 8));
+            byte srcAddr = (byte) ((msg.id >> 8) & 0xFF);
+            byte dstAddr = (byte) (msg.id & 0xFF);
+            byte srcPort = (byte) ((msg.id >> 23) & 0x3F);
+            byte dstPort = (byte) (((msg.id >> 16) & 0x0F) | ((msg.id >> 17) & 0x30));
 
             return new LAPMessage(srcAddr, srcPort, dstAddr, dstPort, msg.getPayload(), msg.remote);
         }
