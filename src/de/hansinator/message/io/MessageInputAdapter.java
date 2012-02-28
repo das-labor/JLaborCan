@@ -1,7 +1,8 @@
-package org.labor.message;
+package de.hansinator.message.io;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import de.hansinator.message.MessageObject;
 
 public class MessageInputAdapter<I extends MessageObject, O extends MessageObject> implements MessageInputStream<O> {
 

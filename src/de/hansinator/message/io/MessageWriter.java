@@ -1,7 +1,8 @@
-package org.labor.message;
+package de.hansinator.message.io;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import de.hansinator.message.MessageObject;
 
 public class MessageWriter<T extends MessageObject> implements MessageOutputStream<T> {
 

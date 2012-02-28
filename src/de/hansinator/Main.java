@@ -1,14 +1,14 @@
-package org.labor;
+package de.hansinator;
 
 import java.io.IOException;
 import java.net.Socket;
-import org.labor.can.CANTCPMessage;
-import org.labor.can.LAPMessage;
-import org.labor.message.MessageInputAdapter;
-import org.labor.message.MessageInputStream;
-import org.labor.message.MessageOutputStream;
-import org.labor.message.MessageReader;
-import org.labor.message.MessageWriter;
+import de.hansinator.message.protocol.CANTCPMessage;
+import de.hansinator.message.protocol.LAPMessage;
+import de.hansinator.message.io.MessageInputAdapter;
+import de.hansinator.message.io.MessageInputStream;
+import de.hansinator.message.io.MessageOutputStream;
+import de.hansinator.message.io.MessageReader;
+import de.hansinator.message.io.MessageWriter;
 
 public class Main {
 

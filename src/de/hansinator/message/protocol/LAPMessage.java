@@ -1,8 +1,8 @@
-package org.labor.can;
+package de.hansinator.message.protocol;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.labor.message.MessageFactory;
+import de.hansinator.message.io.MessageFactory;
 
 /**
  * @author hansinator

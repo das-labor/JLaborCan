@@ -1,4 +1,4 @@
-package org.labor.message;
+package de.hansinator.message;
 
 public abstract class MessageObject {
 
