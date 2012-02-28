@@ -5,10 +5,10 @@ import java.net.Socket;
 import de.hansinator.message.protocol.CANTCPMessage;
 import de.hansinator.message.protocol.LAPMessage;
 import de.hansinator.message.io.MessageInputAdapter;
-import de.hansinator.message.io.MessageInputStream;
-import de.hansinator.message.io.MessageOutputStream;
-import de.hansinator.message.io.MessageReader;
-import de.hansinator.message.io.MessageWriter;
+import de.hansinator.message.io.MessageInput;
+import de.hansinator.message.io.MessageOutput;
+import de.hansinator.message.io.MessageStreamReader;
+import de.hansinator.message.io.MessageStreamWriter;
 
 public class Main {
 
@@ -18,10 +18,10 @@ public class Main {
     public static void main(String[] args) throws IOException {
         //chained message read/write example
         Socket sock = new Socket("kvm", 2342);
-        MessageInputStream<CANTCPMessage> tcpin = new MessageReader<CANTCPMessage>(CANTCPMessage.factory, sock.getInputStream());
-        final MessageOutputStream<CANTCPMessage> tcpout = new MessageWriter<CANTCPMessage>(sock.getOutputStream());
-        MessageInputStream<LAPMessage> lapin = new MessageInputAdapter<CANTCPMessage, LAPMessage>(LAPMessage.factory, tcpin);
-        MessageOutputStream<LAPMessage> lapout = new MessageOutputStream<LAPMessage>() {
+        MessageInput<CANTCPMessage> tcpin = new MessageStreamReader<CANTCPMessage>(CANTCPMessage.factory, sock.getInputStream());
+        final MessageOutput<CANTCPMessage> tcpout = new MessageStreamWriter<CANTCPMessage>(sock.getOutputStream());
+        MessageInput<LAPMessage> lapin = new MessageInputAdapter<CANTCPMessage, LAPMessage>(LAPMessage.factory, tcpin);
+        MessageOutput<LAPMessage> lapout = new MessageOutput<LAPMessage>() {
 
             public void write(LAPMessage message) throws IOException {
                 tcpout.write(new CANTCPMessage((byte) 0x11, message.encode()));

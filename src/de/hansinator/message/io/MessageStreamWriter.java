@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import de.hansinator.message.MessageObject;
 
-public class MessageWriter<T extends MessageObject> implements MessageOutputStream<T> {
+public class MessageStreamWriter<T extends MessageObject> implements MessageOutput<T> {
 
     final OutputStream sink;
 
-    public MessageWriter(OutputStream out) {
+    public MessageStreamWriter(OutputStream out) {
         sink = out;
     }
 

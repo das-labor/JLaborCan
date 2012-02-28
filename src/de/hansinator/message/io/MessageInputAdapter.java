@@ -4,12 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import de.hansinator.message.MessageObject;
 
-public class MessageInputAdapter<I extends MessageObject, O extends MessageObject> implements MessageInputStream<O> {
+public class MessageInputAdapter<I extends MessageObject, O extends MessageObject> implements MessageInput<O> {
 
     final MessageFactory<O> factory;
-    final MessageInputStream source;
+    final MessageInput source;
 
-    public MessageInputAdapter(MessageFactory<O> mf, MessageInputStream<I> in) {
+    public MessageInputAdapter(MessageFactory<O> mf, MessageInput<I> in) {
         factory = mf;
         source = in;
     }
