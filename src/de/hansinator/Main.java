@@ -30,9 +30,9 @@ public class Main {
         LAPMessage msg, msg2;
         
         //klingel
-        msg2 = new LAPMessage((byte)0x04, (byte)0x00, (byte)0x00, (byte)0x01, new byte[]{0,0}, false);
-        lapout.write(msg2);
-        System.exit(1);
+        msg2 = new LAPMessage((byte)0x04, (byte)0x00, (byte)0x00, (byte)0x01, new byte[]{5,0}, false);
+        //lapout.write(msg2);
+        //System.exit(1);
 
         while ((msg = lapin.read()) != null) {
             System.out.println("SRC (ADDR, PORT):\t" + String.format("%02X, %02X", msg.getSrcAddr(), msg.getSrcPort()));
