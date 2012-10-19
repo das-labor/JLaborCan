@@ -46,12 +46,12 @@ public class CANMessage extends MessageObject {
         System.arraycopy(data, 0, rawData, HEADER_LEN, data.length);
         return rawData;
     }
+    
     public final static MessageFactory<CANMessage> factory = new MessageFactory<CANMessage>() {
 
         public CANMessage assemble(InputStream in) throws IOException {
-            int id, ret, off = 0;
-            byte length;
-            byte[] rawData = new byte[DATA_MAX_LENGTH + HEADER_LEN];
+            int id, ret, off = 0, len;
+            byte[] rawData = new byte[DATA_MAX_LENGTH + HEADER_LEN], payload;
 
             while (off < HEADER_LEN) {
                 ret = in.read(rawData, off, HEADER_LEN - off);
@@ -61,28 +61,29 @@ public class CANMessage extends MessageObject {
                 off += ret;
             }
 
-            length = rawData[BYTE_POS_LEN];
+            len = ((int)rawData[BYTE_POS_LEN]) & 0xFF;
 
-            if (length > DATA_MAX_LENGTH || length < 0) {
+            if (len > DATA_MAX_LENGTH || len < 0) {
                 throw new IOException("invalid packet length");
             }
 
-            if (length != 0 && in.read(rawData, off, length) != length) {
+            if (len != 0 && in.read(rawData, off, len) != len) {
                 throw new IOException("unexpected end of stream");
             }
 
-            id = (int) rawData[BYTE_POS_ID]
-                    | ((int) rawData[BYTE_POS_ID + 1] << 8)
-                    | ((int) rawData[BYTE_POS_ID + 2] << 16)
-                    | ((int) rawData[BYTE_POS_ID + 3] << 24);
+            id = ((int) rawData[BYTE_POS_ID] & 0xFF)
+                    | (((int) rawData[BYTE_POS_ID + 1] & 0xFF) << 8)
+                    | (((int) rawData[BYTE_POS_ID + 2] & 0xFF) << 16)
+                    | (((int) rawData[BYTE_POS_ID + 3] & 0xFF) << 24);
 
-            if (length > 0) {
-                rawData = Arrays.copyOfRange(rawData, HEADER_LEN, HEADER_LEN + length);
+            if (len > 0) {
+            	payload = new byte[len];
+            	System.arraycopy(rawData, HEADER_LEN, payload, 0, len);
             } else {
-                rawData = null;
+                payload = null;
             }
 
-            return new CANMessage(id, rawData, false);
+            return new CANMessage(id, payload, false);
         }
     };
 }

@@ -8,6 +8,14 @@ import de.hansinator.message.io.MessageFactory;
  * @author hansinator
  */
 public class LAPMessage extends CANMessage {
+	
+	public static final int MAX_PORT = 63;
+	
+	public static final int MASK_PORT = 0x3F;
+	
+	public static final int MAX_ADDR = 255;
+	
+	public static final int MASK_ADDR = 0xFF;
 
     private final byte srcAddr;
     private final byte dstAddr;
@@ -17,8 +25,8 @@ public class LAPMessage extends CANMessage {
     public LAPMessage(byte srcAddr, byte srcPort, byte dstAddr, byte dstPort, byte[] data, boolean remote) {
         super(((srcPort & 0x3F) << 23) | ((dstPort & 0x30) << 17)
                 | ((int) ((dstPort & 0x0F) << 16)
-                | ((int) srcAddr << 8)
-                | (int) dstAddr), data, remote);
+                | (((int) srcAddr & 0xFF) << 8)
+                | ((int) dstAddr) & 0xFF), data, remote);
 
         this.srcAddr = srcAddr;
         this.dstAddr = dstAddr;
@@ -41,6 +49,7 @@ public class LAPMessage extends CANMessage {
     public byte getSrcPort() {
         return srcPort;
     }
+    
     public final static MessageFactory<LAPMessage> factory = new MessageFactory<LAPMessage>() {
 
         public LAPMessage assemble(InputStream in) throws IOException {

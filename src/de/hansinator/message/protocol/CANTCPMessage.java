@@ -12,7 +12,7 @@ import de.hansinator.message.MessageObject;
  */
 public class CANTCPMessage extends MessageObject {
 
-    public static final int DATA_MAX_LENGTH = 18;
+    public static final int DATA_MAX_LENGTH = 20;
     private final static int HEADER_LEN = 2;
     private final byte cmd;
 
@@ -28,7 +28,7 @@ public class CANTCPMessage extends MessageObject {
     @Override
     public byte[] encode() {
         byte[] rawData = new byte[data.length + HEADER_LEN];
-        rawData[0] = (byte) data.length;
+        rawData[0] = (byte) (data.length & 0xFF);
         rawData[1] = cmd;
         System.arraycopy(data, 0, rawData, HEADER_LEN, data.length);
         return rawData;
@@ -36,9 +36,9 @@ public class CANTCPMessage extends MessageObject {
     public final static MessageFactory<CANTCPMessage> factory = new MessageFactory<CANTCPMessage>() {
 
         public CANTCPMessage assemble(InputStream in) throws IOException {
-            byte len, cmd;
-            byte[] rawData = new byte[DATA_MAX_LENGTH + HEADER_LEN];
-            int ret, off = 0;
+            byte cmd;
+            byte[] rawData = new byte[DATA_MAX_LENGTH + HEADER_LEN], payload;
+            int len, ret, off = 0;
 
             while (off < HEADER_LEN)
             {
@@ -49,10 +49,10 @@ public class CANTCPMessage extends MessageObject {
                 off += ret;
             }
 
-            len = rawData[0];
+            len = ((int)rawData[0]) & 0xFF;
 
             if (len > DATA_MAX_LENGTH || len < 0) {
-                throw new IOException("invalid packet length");
+                throw new IOException("invalid packet length :" + len);
             }
 
             while (len != 0)
@@ -68,12 +68,13 @@ public class CANTCPMessage extends MessageObject {
             len = rawData[0];
             cmd = rawData[1];
             if (len > 0 && cmd != 0) {
-                rawData = Arrays.copyOfRange(rawData, HEADER_LEN, HEADER_LEN + len);
+            	payload = new byte[len];
+            	System.arraycopy(rawData, HEADER_LEN, payload, 0, len);
             } else {
-                rawData = null;
+            	payload = null;
             }
 
-            return new CANTCPMessage(cmd, rawData);
+            return new CANTCPMessage(cmd, payload);
         }
     };
 }

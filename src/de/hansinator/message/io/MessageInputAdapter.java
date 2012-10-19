@@ -7,7 +7,7 @@ import de.hansinator.message.MessageObject;
 public class MessageInputAdapter<I extends MessageObject, O extends MessageObject> implements MessageInput<O> {
 
     final MessageFactory<O> factory;
-    final MessageInput source;
+    final MessageInput<I> source;
 
     public MessageInputAdapter(MessageFactory<O> mf, MessageInput<I> in) {
         factory = mf;
