@@ -22,7 +22,7 @@ import de.hansinator.message.io.MessageOutput;
  */
 public class AsyncWriteMessageProxy<T extends MessageObject> implements MessageEndpoint<T> {
 
-	private volatile boolean running = false, autoRestart;
+	private volatile boolean running = false, starting = false, autoRestart;
 
 	private final MessageEndpoint<T> endpoint;
 
@@ -69,9 +69,13 @@ public class AsyncWriteMessageProxy<T extends MessageObject> implements MessageE
 							autoRestart = false;
 							return;
 						}
+						finally
+						{
+							running = true;
+							starting = false;
+						}
 
 					// enter main loop
-					running = true;
 					try {
 						while (running || !messageQueue.isEmpty()) {
 							// write out messages
@@ -106,6 +110,7 @@ public class AsyncWriteMessageProxy<T extends MessageObject> implements MessageE
 					}
 				}
 			}, "AsyncMessageWriteWorker");
+			starting = true;
 			worker.start();
 		} else
 			return false;
@@ -125,7 +130,7 @@ public class AsyncWriteMessageProxy<T extends MessageObject> implements MessageE
 
 	synchronized private boolean up() {
 		// if not running, try auto restarting the worker
-		if (!running && autoRestart) {
+		if (!running && autoRestart && !starting) {
 			// wake up neo
 			if (worker != null && worker.isAlive())
 				worker.interrupt();
@@ -138,7 +143,8 @@ public class AsyncWriteMessageProxy<T extends MessageObject> implements MessageE
 			start(lastTimeout);
 			while (!running && autoRestart)
 				Thread.yield();
-		}
+		} else if(starting)
+			while(starting) Thread.yield();
 
 		return autoRestart;
 	}
