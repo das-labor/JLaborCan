@@ -22,7 +22,7 @@ import de.hansinator.message.io.MessageOutput;
  */
 public class AsyncWriteMessageProxy<T extends MessageObject> implements MessageEndpoint<T> {
 
-	private volatile boolean running = false;
+	private volatile boolean running = false, autoRestart;
 
 	private final MessageEndpoint<T> endpoint;
 
@@ -33,8 +33,6 @@ public class AsyncWriteMessageProxy<T extends MessageObject> implements MessageE
 	private final Object inputLock = new Object();
 
 	private Thread worker = null;
-
-	private boolean autoRestart;
 
 	private int lastTimeout = 0;
 
@@ -57,22 +55,23 @@ public class AsyncWriteMessageProxy<T extends MessageObject> implements MessageE
 				@Override
 				public void run() {
 					// setup connection
+					MessageOutput<T> out = null;
 					if (!endpoint.isConnected())
 						try {
 							endpoint.connect(timeout);
+							// setup synchronous input
+							synchronized (inputLock) {
+								realInput = endpoint.getMessageInput();
+							}
+							//fetch output
+							out = endpoint.getMessageOutput();
 						} catch (IOException e) {
 							autoRestart = false;
 							return;
 						}
 
-					// setup synchronous input
-					synchronized (inputLock) {
-						realInput = endpoint.getMessageInput();
-					}
-
-					// setup output and enter main loop
+					// enter main loop
 					running = true;
-					final MessageOutput<T> out = endpoint.getMessageOutput();
 					try {
 						while (running || !messageQueue.isEmpty()) {
 							// write out messages
@@ -149,13 +148,13 @@ public class AsyncWriteMessageProxy<T extends MessageObject> implements MessageE
 	}
 
 	@Override
-	public synchronized MessageInput<T> getMessageInput() {
+	public synchronized MessageInput<T> getMessageInput() throws IOException {
 		if (up())
 			synchronized (inputLock) {
 				if (isConnected() && (realInput != null))
 					return input;
 			}
-		throw new IllegalStateException("Not connected");
+		throw new IOException("Not connected");
 
 	}
 

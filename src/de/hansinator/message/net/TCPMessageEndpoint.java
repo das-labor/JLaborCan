@@ -77,16 +77,18 @@ public class TCPMessageEndpoint<T extends MessageObject> implements MessageEndpo
 		return socket != null && socket.isConnected() && !socket.isClosed();
 	}
 
-	public MessageInput<T> getMessageInput() {
+	@Override
+	public MessageInput<T> getMessageInput() throws IOException {
 		if(!isConnected())
-			throw new IllegalStateException("No connection");
+			throw new IOException("No connection");
 		
 		return new MessageStreamReader<T>(factory, in);
 	}
 
-	public MessageOutput<T> getMessageOutput() {
+	@Override
+	public MessageOutput<T> getMessageOutput() throws IOException {
 		if(!isConnected())
-			throw new IllegalStateException("No connection");
+			throw new IOException("No connection");
 		
 		return new MessageStreamWriter<T>(out);
 	}

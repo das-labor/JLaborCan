@@ -17,8 +17,8 @@ public interface MessageEndpoint<T extends MessageObject> {
 	
 	public boolean isConnected();
 
-	public MessageInput<T> getMessageInput();
+	public MessageInput<T> getMessageInput() throws IOException;
 	
-	public MessageOutput<T> getMessageOutput();
+	public MessageOutput<T> getMessageOutput() throws IOException;
 	
 }
