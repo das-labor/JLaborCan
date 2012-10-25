@@ -12,7 +12,7 @@ import de.hansinator.message.net.MessageEndpoint;
  * 
  * @author hansinator
  */
-public abstract class MessageGateway<BUS extends MessageObject, EP extends MessageObject> {
+public abstract class MessageGateway<BUS extends MessageObject, EP extends MessageObject> implements MessageNode<BUS> {
 
 	private static Object lock = new Object();
 	
