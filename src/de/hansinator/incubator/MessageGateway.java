@@ -15,47 +15,26 @@ import de.hansinator.message.net.MessageEndpoint;
 public abstract class MessageGateway<BUS extends MessageObject, EP extends MessageObject> implements MessageNode<BUS> {
 
 	private static Object lock = new Object();
-	
+
 	private final MessageBus<BUS> bus;
 
 	private final MessageEndpoint<EP> endpoint;
-	
+
 	private MessageInput<BUS> in = null;
-	
+
 	private MessageOutput<BUS> out = null;
-	
+
 	@SuppressWarnings("unused")
 	private MessageDispatcher<BUS> dispatcher;
 
-	public MessageGateway(MessageBus<BUS> bus, MessageEndpoint<EP> endpoint) throws IOException {
+	public MessageGateway(MessageBus<BUS> bus, MessageEndpoint<EP> endpoint) {
 		this.endpoint = endpoint;
 		this.bus = bus;
 	}
-	
-	protected abstract MessageOutput<BUS> buildOutputChain(MessageOutput<EP> out);
-	/*{
-		return new MessageOutput<LAPMessage>() {
 
-					public void write(LAPMessage message) throws IOException {
-						o.write(new CANTCPMessage((byte) 0x11, message.encode()));
-					}
-				};
-	}*/
-	
-	protected abstract MessageInput<BUS> buildInputChain(MessageInput<EP> in);
-	/*{
-	 new MessageInputAdapter<CANTCPMessage, LAPMessage>(LAPMessage.factory,
-						new MessageInputFilter<CANTCPMessage>(i) {
+	protected abstract MessageOutput<BUS> buildOutputChain(final MessageOutput<EP> out);
 
-							@Override
-							public boolean accept(CANTCPMessage message) {
-
-								return message.getCommand() == 0x11;
-							}
-
-						});
-	}*/
-	 
+	protected abstract MessageInput<BUS> buildInputChain(final MessageInput<EP> in);
 
 	public synchronized boolean startEndpoint() {
 		try {
@@ -66,9 +45,9 @@ public abstract class MessageGateway<BUS extends MessageObject, EP extends Messa
 				out = buildOutputChain(o);
 				in = buildInputChain(i);
 			}
-			
+
 			this.dispatcher = new MessageDispatcher<BUS>(in) {
-				
+
 				@Override
 				protected void handleMessage(BUS msg) {
 					bus.sendMessage(msg);
@@ -86,10 +65,10 @@ public abstract class MessageGateway<BUS extends MessageObject, EP extends Messa
 
 	public boolean onMessageReceived(BUS msg) {
 		MessageOutput<BUS> out;
-		//Log.v(LNET, "Sending message");
+		// Log.v(LNET, "Sending message");
 		synchronized (lock) {
 			if (this.out == null) {
-				//Log.d(LNET, "Send failed, got no connection");
+				// Log.d(LNET, "Send failed, got no connection");
 				return false;
 			}
 			out = this.out;
@@ -98,7 +77,7 @@ public abstract class MessageGateway<BUS extends MessageObject, EP extends Messa
 			out.write(msg);
 			return true;
 		} catch (IOException e) {
-			//Log.d(LNET, "Failed to deliver message", e);
+			// Log.d(LNET, "Failed to deliver message", e);
 			return false;
 		}
 	}
