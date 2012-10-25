@@ -50,7 +50,7 @@ public class AsyncWriteMessageProxy<T extends MessageObject> implements MessageE
 	}
 
 	private synchronized boolean start(final int timeout) {
-		if (!running && (worker == null || !worker.isAlive())) {
+		if (!running && !starting && (worker == null || !worker.isAlive())) {
 			worker = new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -65,13 +65,16 @@ public class AsyncWriteMessageProxy<T extends MessageObject> implements MessageE
 							}
 							//fetch output
 							out = endpoint.getMessageOutput();
+							
+							//set to running
+							running = true;
 						} catch (IOException e) {
 							autoRestart = false;
+							starting = false;
 							return;
 						}
 						finally
 						{
-							running = true;
 							starting = false;
 						}
 
