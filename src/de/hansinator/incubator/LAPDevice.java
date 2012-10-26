@@ -12,13 +12,13 @@ import de.hansinator.message.protocol.LAPMessage;
  */
 public class LAPDevice implements MessageNode<LAPMessage> {
 
-	private final byte dstAddr;
+	protected final byte dstAddr;
 
-	private final byte dstPort;
+	protected final byte dstPort;
 
-	private final byte srcAddr;
+	protected final byte srcAddr;
 
-	private final byte srcPort;
+	protected final byte srcPort;
 
 	private final MessageBus<LAPMessage> bus;
 
