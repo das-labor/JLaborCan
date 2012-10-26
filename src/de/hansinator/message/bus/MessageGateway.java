@@ -1,11 +1,8 @@
-package de.hansinator.incubator;
+package de.hansinator.message.bus;
 
 import java.io.IOException;
 
 import de.hansinator.message.MessageObject;
-import de.hansinator.message.bus.MessageBus;
-import de.hansinator.message.bus.MessageDispatcher;
-import de.hansinator.message.bus.MessageNode;
 import de.hansinator.message.io.MessageInput;
 import de.hansinator.message.io.MessageOutput;
 import de.hansinator.message.net.MessageEndpoint;
@@ -42,9 +39,9 @@ public abstract class MessageGateway<BUS extends MessageObject, EP extends Messa
 	public synchronized boolean connect(int timeout) {
 		try {
 			endpoint.connect(timeout);
+			final MessageInput<EP> i = endpoint.getMessageInput();
+			final MessageOutput<EP> o = endpoint.getMessageOutput();
 			synchronized (lock) {
-				final MessageInput<EP> i = endpoint.getMessageInput();
-				final MessageOutput<EP> o = endpoint.getMessageOutput();
 				out = buildOutputChain(o);
 				in = buildInputChain(i);
 			}
@@ -64,6 +61,10 @@ public abstract class MessageGateway<BUS extends MessageObject, EP extends Messa
 
 	public synchronized void disconnect() throws IOException {
 		dispatcher.stop();
+		synchronized (lock) {
+			out = null;
+			in = null;
+		}
 		endpoint.close();
 	}
 

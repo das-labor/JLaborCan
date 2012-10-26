@@ -3,6 +3,7 @@ package de.hansinator.incubator;
 import java.io.IOException;
 
 import de.hansinator.message.bus.MessageBus;
+import de.hansinator.message.bus.MessageGateway;
 import de.hansinator.message.io.MessageInput;
 import de.hansinator.message.io.MessageInputAdapter;
 import de.hansinator.message.io.MessageInputFilter;
