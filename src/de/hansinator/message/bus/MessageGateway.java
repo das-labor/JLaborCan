@@ -29,7 +29,10 @@ public abstract class MessageGateway<BUS extends MessageObject, EP extends Messa
 		this.endpoint = endpoint;
 		this.bus = bus;
 		bus.addMessageNode(this);
-		
+	}
+
+	protected MessageEndpoint<EP> getEndpoint() {
+		return endpoint;
 	}
 
 	protected abstract MessageOutput<BUS> buildOutputChain(final MessageOutput<EP> out);
