@@ -1,4 +1,4 @@
-package de.hansinator.incubator;
+package de.hansinator.message.bus;
 
 import java.util.ArrayList;
 
@@ -24,9 +24,9 @@ public class MessageBus<T extends MessageObject> {
 		return nodes.remove(node);
 	}
 	
-    public synchronized void sendMessage(T message) {
-    	for(MessageNode<T> node : nodes) {
-    		node.onMessageReceived(message);
-    	}
+    public synchronized void sendMessage(MessageNode<T> sender, T message) {
+    	for(MessageNode<T> node : nodes)
+    		if(node != sender)
+    			node.onMessageReceived(message);
     }
 }

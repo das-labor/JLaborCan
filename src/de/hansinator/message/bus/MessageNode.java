@@ -1,4 +1,4 @@
-package de.hansinator.incubator;
+package de.hansinator.message.bus;
 
 import de.hansinator.message.MessageObject;
 

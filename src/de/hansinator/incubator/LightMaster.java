@@ -1,5 +1,6 @@
 package de.hansinator.incubator;
 
+import de.hansinator.message.bus.MessageBus;
 import de.hansinator.message.io.MessageOutput;
 import de.hansinator.message.protocol.LAPMessage;
 

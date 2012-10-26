@@ -1,5 +1,7 @@
 package de.hansinator.incubator;
 
+import de.hansinator.message.bus.MessageBus;
+import de.hansinator.message.bus.MessageNode;
 import de.hansinator.message.protocol.LAPMessage;
 
 /**
@@ -34,6 +36,8 @@ public class LAPDevice implements MessageNode<LAPMessage> {
 		this.dstAddr = (byte) (dstAddr & LAPMessage.MASK_ADDR);
 		this.dstPort = (byte) (dstPort & LAPMessage.MASK_PORT);
 		this.bus = bus;
+		
+		bus.addMessageNode(this);
 	}
 
 	public LAPDevice(byte srcAddr, byte srcPort, byte dstAddr, byte dstPort, MessageBus<LAPMessage> bus) {
@@ -81,7 +85,7 @@ public class LAPDevice implements MessageNode<LAPMessage> {
 	}
 
 	private synchronized void sendInternal(byte srcAddr, byte srcPort, byte dstAddr, byte dstPort, byte[] data, boolean remote) {
-		bus.sendMessage(new LAPMessage(srcAddr, srcPort, dstAddr, dstPort, data, remote));
+		bus.sendMessage(this, new LAPMessage(srcAddr, srcPort, dstAddr, dstPort, data, remote));
 	}
 
 	private void testAddr(int addr, String prefix) {
