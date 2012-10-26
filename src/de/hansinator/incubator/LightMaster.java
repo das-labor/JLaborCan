@@ -1,7 +1,6 @@
 package de.hansinator.incubator;
 
 import de.hansinator.message.bus.MessageBus;
-import de.hansinator.message.io.MessageOutput;
 import de.hansinator.message.protocol.LAPMessage;
 
 public class LightMaster {
@@ -20,31 +19,9 @@ public class LightMaster {
 
 	private final LAPDevice bastelCommander;
 
-	private final LAPDevice loungeDimmerWall;
+	public final LoungeDimmer loungeDimmerWall;
 
-	private final LAPDevice loungeDimmerDoor;
-
-	/*
-	 * lounge constants
-	 */
-
-	// light lounge dimmer switch template
-	static final byte[] LAP_LOUNGE_LIGHT_DIMMER_SWITCH = new byte[] { 0x04, 0, 0 };
-
-	// light lounge dimmer pwm template
-	static final byte[] LAP_LOUNGE_LIGHT_DIMMER_PWM = new byte[] { PCMD_PWM, 0, 0 };
-
-	// light lounge spots pwm 1 object
-	static final byte LAP_LOUNGE_LIGHT_SPOTS_1 = 0x00;
-
-	// light lounge spots pwm 2 object
-	static final byte LAP_LOUNGE_LIGHT_SPOTS_2 = 0x01;
-
-	// light lounge spots pwm 3 object
-	static final byte LAP_LOUNGE_LIGHT_SPOTS_3 = 0x02;
-
-	// light lounge neon pwm object
-	static final byte LAP_LOUNGE_LIGHT_NEON = 0x03;
+	public final LoungeDimmer loungeDimmerDoor;
 
 	/*
 	 * lecture constants
@@ -139,11 +116,11 @@ public class LightMaster {
 	// light bastel orgatable pwm object
 	static final byte LAP_BASTEL_PWM_ORGATABLE = 3;
 
-	public LightMaster(MessageBus<LAPMessage> lap) {
-		powerCommander = new LAPDevice(0x00, 0x00, 0x02, 0x01, lap);
-		bastelCommander = new LAPDevice(0x00, 0x00, 0xA9, 0x01, lap);
-		loungeDimmerWall = new LAPDevice(0x00, 0x00, 0x61, 0x01, lap);
-		loungeDimmerDoor = new LAPDevice(0x00, 0x00, 0x60, 0x01, lap);
+	public LightMaster(MessageBus<LAPMessage> bus) {
+		powerCommander = new LAPDevice(0x00, 0x00, 0x02, 0x01, bus);
+		bastelCommander = new LAPDevice(0x00, 0x00, 0xA9, 0x01, bus);
+		loungeDimmerWall = new LoungeDimmer(bus, 0x61);
+		loungeDimmerDoor = new LoungeDimmer(bus, 0x60);
 	}
 
 	public void switchKitchen(boolean state) {
@@ -250,184 +227,33 @@ public class LightMaster {
 		switchLoungeNeonAll(state);
 		switchLoungeSpotsAll(state);
 	}
+	
+	public void switchLoungeNeonAll(boolean state) {
+		loungeDimmerWall.switchNeonTube(state);
+		loungeDimmerDoor.switchNeonTube(state);
+	}
+	
+
+	public void switchLoungeSpotsAll(boolean state) {
+		loungeDimmerWall.switchAllSpots(state);
+		loungeDimmerDoor.switchAllSpots(state);
+	}
 
 	public void dimLoungeAll(int value) {
 		dimLoungeNeonAll(value);
 		dimLoungeSpotsAll(value);
 	}
 
-	public void switchLoungeNeonAll(boolean state) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_SWITCH.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_NEON;
-		msg[2] = (byte) (state ? 1 : 0);
-
-		loungeDimmerDoor.send(msg);
-		loungeDimmerWall.send(msg);
-	}
-
-	public void dimLoungeNeonAll(int value) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_PWM.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_NEON;
-		msg[2] = (byte) (value & 0xFF);
-
-		loungeDimmerDoor.send(msg);
-		loungeDimmerWall.send(msg);
-	}
-
-	public void switchLoungeNeonDoor(boolean state) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_SWITCH.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_NEON;
-		msg[2] = (byte) (state ? 1 : 0);
-
-		loungeDimmerDoor.send(msg);
-		dimLoungeNeonDoor(0x7F);
-	}
-
-	public void dimLoungeNeonDoor(int value) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_PWM.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_NEON;
-		msg[2] = (byte) (value & 0xFF);
-
-		loungeDimmerDoor.send(msg);
-	}
-
-	public void switchLoungeNeonWall(boolean state) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_SWITCH.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_NEON;
-		msg[2] = (byte) (state ? 1 : 0);
-
-		loungeDimmerWall.send(msg);
-		dimLoungeNeonWall(0x7F);
-	}
-
-	public void dimLoungeNeonWall(int value) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_PWM.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_NEON;
-		msg[2] = (byte) (value & 0xFF);
-
-		loungeDimmerWall.send(msg);
-	}
-
-	public void switchLoungeSpotsAll(boolean state) {
-		switchLoungeSpotsWall1(state);
-		switchLoungeSpotsWall2(state);
-		switchLoungeSpotsWall3(state);
-		switchLoungeSpotsDoor1(state);
-		switchLoungeSpotsDoor2(state);
-		switchLoungeSpotsDoor3(state);
-	}
-
 	public void dimLoungeSpotsAll(int value) {
-		dimLoungeSpotsWall1(value);
-		dimLoungeSpotsWall2(value);
-		dimLoungeSpotsWall3(value);
-		dimLoungeSpotsDoor1(value);
-		dimLoungeSpotsDoor2(value);
-		dimLoungeSpotsDoor3(value);
+		loungeDimmerWall.dimAllSpots(value);
+		loungeDimmerDoor.dimAllSpots(value);
 	}
-
-	public void switchLoungeSpotsWall1(boolean state) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_SWITCH.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_1;
-		msg[2] = (byte) (state ? 1 : 0);
-
-		loungeDimmerWall.send(msg);
-		dimLoungeSpotsWall1(0x7F);
+	
+	public void dimLoungeNeonAll(int value) {
+		loungeDimmerWall.dimNeonTube(value);
+		loungeDimmerDoor.dimNeonTube(value);
 	}
-
-	public void dimLoungeSpotsWall1(int value) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_PWM.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_1;
-		msg[2] = (byte) (value & 0xFF);
-
-		loungeDimmerWall.send(msg);
-	}
-
-	public void switchLoungeSpotsWall2(boolean state) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_SWITCH.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_2;
-		msg[2] = (byte) (state ? 1 : 0);
-
-		loungeDimmerWall.send(msg);
-		dimLoungeSpotsWall2(0x7F);
-	}
-
-	public void dimLoungeSpotsWall2(int value) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_PWM.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_2;
-		msg[2] = (byte) (value & 0xFF);
-
-		loungeDimmerWall.send(msg);
-	}
-
-	public void switchLoungeSpotsWall3(boolean state) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_SWITCH.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_3;
-		msg[2] = (byte) (state ? 1 : 0);
-
-		loungeDimmerWall.send(msg);
-		dimLoungeSpotsWall3(0x7F);
-	}
-
-	public void dimLoungeSpotsWall3(int value) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_PWM.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_3;
-		msg[2] = (byte) (value & 0xFF);
-
-		loungeDimmerWall.send(msg);
-	}
-
-	public void switchLoungeSpotsDoor1(boolean state) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_SWITCH.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_1;
-		msg[2] = (byte) (state ? 1 : 0);
-
-		loungeDimmerDoor.send(msg);
-		dimLoungeSpotsDoor1(0x7F);
-	}
-
-	public void dimLoungeSpotsDoor1(int value) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_PWM.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_1;
-		msg[2] = (byte) (value & 0xFF);
-
-		loungeDimmerDoor.send(msg);
-	}
-
-	public void switchLoungeSpotsDoor2(boolean state) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_SWITCH.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_2;
-		msg[2] = (byte) (state ? 1 : 0);
-
-		loungeDimmerDoor.send(msg);
-		dimLoungeSpotsDoor2(0x7F);
-	}
-
-	public void dimLoungeSpotsDoor2(int value) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_PWM.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_2;
-		msg[2] = (byte) (value & 0xFF);
-
-		loungeDimmerDoor.send(msg);
-	}
-
-	public void switchLoungeSpotsDoor3(boolean state) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_SWITCH.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_3;
-		msg[2] = (byte) (state ? 1 : 0);
-
-		loungeDimmerDoor.send(msg);
-		dimLoungeSpotsDoor3(0x7F);
-	}
-
-	public void dimLoungeSpotsDoor3(int value) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_PWM.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_3;
-		msg[2] = (byte) (value & 0xFF);
-
-		loungeDimmerDoor.send(msg);
-	}
-
+	
 	public void switchBastelAll(boolean state) {
 		switchBastelPrinter1(state);
 		switchBastelPrinter2(state);

@@ -1,5 +1,7 @@
 package de.hansinator.incubator;
 
+import java.util.EventListener;
+
 import de.hansinator.message.bus.MessageBus;
 import de.hansinator.message.protocol.LAPMessage;
 
@@ -29,8 +31,76 @@ public class LoungeDimmer extends LAPDevice {
 	// light lounge neon pwm object
 	static final byte LAP_LOUNGE_LIGHT_NEON = 0x03;
 
+	// port of state message
+	static final byte MSG_PORT_STATE = 0x03;
+
+	private final int pwmVals[] = new int[4];
+
+	private final boolean switchVals[] = new boolean[4];
+	
+	private final Object lock = new Object();
+
+	private volatile LoungeStateUpdateListener listener = null;
+
+	public interface LoungeStateUpdateListener extends EventListener {
+		public void onUpdate(boolean[] switchVals, int[] pwmVals);
+	}
+
 	public LoungeDimmer(MessageBus<LAPMessage> bus, int deviceAddress) {
 		super(0x00, 0x00, deviceAddress, 0x01, bus);
+	}
+
+	public void setListener(LoungeStateUpdateListener listener) {
+		synchronized(lock)
+		{
+			this.listener = listener;
+		}
+	}
+
+	@Override
+	public boolean onMessageReceived(LAPMessage msg) {
+		// state message from device
+		if ((msg.getSrcAddr() == dstAddr) && (msg.getDstPort() == MSG_PORT_STATE) && (msg.getLength() == 5)) {
+			final byte[] pl = msg.getPayload();
+
+			// decode switch state and save  pwm vals
+			for (int i = 0; i < switchVals.length; i++)
+			{
+				switchVals[i] = (pl[0] & (1 << i)) == 1;
+				pwmVals[i] = (int)pl[i+1] & 0xff;
+			}
+
+			synchronized(lock)
+			{
+				if (listener != null)
+					listener.onUpdate(switchVals, pwmVals);
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+	public void switchAll(boolean state) {
+		switchNeonTube(state);
+		switchAllSpots(state);
+	}
+
+	public void switchAllSpots(boolean state) {
+		switchSpot1(state);
+		switchSpot2(state);
+		switchSpot3(state);
+	}
+
+	public void dimAll(int value) {
+		dimNeonTube(value);
+		dimAllSpots(value);
+	}
+
+	public void dimAllSpots(int value) {
+		dimSpot1(value);
+		dimSpot2(value);
+		dimSpot3(value);
 	}
 
 	public void switchNeonTube(boolean state) {
@@ -101,4 +171,34 @@ public class LoungeDimmer extends LAPDevice {
 		send(msg);
 	}
 
+	public static void main(String[] args) {
+		// create message bus
+		MessageBus<LAPMessage> bus = new MessageBus<LAPMessage>();
+
+		LoungeDimmer loungeDimmerWall = new LoungeDimmer(bus, 0x61);
+		LoungeDimmer loungeDimmerDoor = new LoungeDimmer(bus, 0x60);
+
+		// create gateway
+		LAPTCPCanGateway gateway = LAPTCPCanGateway.makeGateway(bus, "10.0.1.2", 2342, true);
+		if (gateway.up(10000, true)) {
+			loungeDimmerWall.setListener(new LoungeStateUpdateListener() {
+
+				@Override
+				public void onUpdate(boolean[] switchVals, int[] pwmVals) {
+					for (int i = 0; i < 4; i++)
+						System.out.println("wall " + i + ": " + (switchVals[i] ? "on" : "off") + ", " + pwmVals[i]);
+				}
+			});
+			loungeDimmerDoor.setListener(new LoungeStateUpdateListener() {
+
+				@Override
+				public void onUpdate(boolean[] switchVals, int[] pwmVals) {
+					for (int i = 0; i < 4; i++)
+						System.out.println("door " + i + ": " + (switchVals[i] ? "on" : "off") + ", " + pwmVals[i]);
+				}
+			});
+			while(true);
+		} else
+			System.out.println("failed to up gateway");
+	}
 }
