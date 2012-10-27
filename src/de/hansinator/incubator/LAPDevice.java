@@ -5,7 +5,7 @@ import de.hansinator.message.bus.MessageNode;
 import de.hansinator.message.protocol.LAPMessage;
 
 /**
- * Something like a builder/factory for lap messages
+ * A LAP device on a bus 
  * 
  * @author hansinator
  * 
@@ -167,7 +167,7 @@ public class LAPDevice implements MessageNode<LAPMessage> {
 				(byte) (dstPort & LAPMessage.MASK_PORT), data);
 	}
 
-	private synchronized void sendInternal(byte srcAddr, byte srcPort, byte dstAddr, byte dstPort, byte[] data) {
+	protected synchronized void sendInternal(byte srcAddr, byte srcPort, byte dstAddr, byte dstPort, byte[] data) {
 		bus.sendMessage(this, new LAPMessage(srcAddr, srcPort, dstAddr, dstPort, data));
 	}
 

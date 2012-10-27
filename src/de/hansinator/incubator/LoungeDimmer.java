@@ -16,25 +16,25 @@ public class LoungeDimmer extends LAPDevice {
 	// request state commando byte
 	static byte CMD_REQ = 0x05;
 	
-	static final byte[] LAP_LOUNGE_REQUEST_STATE = new byte[] { CMD_REQ };
+	static final byte[] LOUNGEDIMMER_MSG_REQUESTSTATE = new byte[] { CMD_REQ };
 
 	// light lounge dimmer switch template
-	static final byte[] LAP_LOUNGE_LIGHT_DIMMER_SWITCH = new byte[] { CMD_SWITCH, 0, 0 };
+	static final byte[] LOUNGEDIMMER_MSG_SWITCH = new byte[] { CMD_SWITCH, 0, 0 };
 
 	// light lounge dimmer pwm template
-	static final byte[] LAP_LOUNGE_LIGHT_DIMMER_PWM = new byte[] { CMD_PWM, 0, 0 };
+	static final byte[] LOUNGEDIMMER_MSG_PWM = new byte[] { CMD_PWM, 0, 0 };
 
 	// light lounge spots pwm 1 object
-	static final byte LAP_LOUNGE_LIGHT_SPOTS_1 = 0x00;
+	static final byte LOUNGE_LIGHT_SPOTS_1 = 0x00;
 
 	// light lounge spots pwm 2 object
-	static final byte LAP_LOUNGE_LIGHT_SPOTS_2 = 0x01;
+	static final byte LOUNGE_LIGHT_SPOTS_2 = 0x01;
 
 	// light lounge spots pwm 3 object
-	static final byte LAP_LOUNGE_LIGHT_SPOTS_3 = 0x02;
+	static final byte LOUNGE_LIGHT_SPOTS_3 = 0x02;
 
 	// light lounge neon pwm object
-	static final byte LAP_LOUNGE_LIGHT_NEON = 0x03;
+	static final byte LOUNGE_LIGHT_NEON = 0x03;
 
 	// port of state message
 	static final byte MSG_PORT_STATE = 0x03;
@@ -87,7 +87,7 @@ public class LoungeDimmer extends LAPDevice {
 	}
 	
 	public void requestState() {
-		byte[] msg = LAP_LOUNGE_REQUEST_STATE.clone();
+		byte[] msg = LOUNGEDIMMER_MSG_REQUESTSTATE.clone();
 		sendTo(msg);
 	}
 
@@ -114,8 +114,8 @@ public class LoungeDimmer extends LAPDevice {
 	}
 
 	public void switchNeonTube(boolean state) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_SWITCH.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_NEON;
+		byte[] msg = LOUNGEDIMMER_MSG_SWITCH.clone();
+		msg[1] = LOUNGE_LIGHT_NEON;
 		msg[2] = (byte) (state ? 1 : 0);
 
 		sendTo(msg);
@@ -123,8 +123,8 @@ public class LoungeDimmer extends LAPDevice {
 	}
 
 	public void switchSpot1(boolean state) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_SWITCH.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_1;
+		byte[] msg = LOUNGEDIMMER_MSG_SWITCH.clone();
+		msg[1] = LOUNGE_LIGHT_SPOTS_1;
 		msg[2] = (byte) (state ? 1 : 0);
 
 		sendTo(msg);
@@ -132,8 +132,8 @@ public class LoungeDimmer extends LAPDevice {
 	}
 
 	public void switchSpot2(boolean state) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_SWITCH.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_2;
+		byte[] msg = LOUNGEDIMMER_MSG_SWITCH.clone();
+		msg[1] = LOUNGE_LIGHT_SPOTS_2;
 		msg[2] = (byte) (state ? 1 : 0);
 
 		sendTo(msg);
@@ -141,8 +141,8 @@ public class LoungeDimmer extends LAPDevice {
 	}
 
 	public void switchSpot3(boolean state) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_SWITCH.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_3;
+		byte[] msg = LOUNGEDIMMER_MSG_SWITCH.clone();
+		msg[1] = LOUNGE_LIGHT_SPOTS_3;
 		msg[2] = (byte) (state ? 1 : 0);
 
 		sendTo(msg);
@@ -150,32 +150,32 @@ public class LoungeDimmer extends LAPDevice {
 	}
 
 	public void dimNeonTube(int value) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_PWM.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_NEON;
+		byte[] msg = LOUNGEDIMMER_MSG_PWM.clone();
+		msg[1] = LOUNGE_LIGHT_NEON;
 		msg[2] = (byte) (value & 0xFF);
 
 		sendTo(msg);
 	}
 
 	public void dimSpot1(int value) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_PWM.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_1;
+		byte[] msg = LOUNGEDIMMER_MSG_PWM.clone();
+		msg[1] = LOUNGE_LIGHT_SPOTS_1;
 		msg[2] = (byte) (value & 0xFF);
 
 		sendTo(msg);
 	}
 
 	public void dimSpot2(int value) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_PWM.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_2;
+		byte[] msg = LOUNGEDIMMER_MSG_PWM.clone();
+		msg[1] = LOUNGE_LIGHT_SPOTS_2;
 		msg[2] = (byte) (value & 0xFF);
 
 		sendTo(msg);
 	}
 
 	public void dimSpot3(int value) {
-		byte[] msg = LAP_LOUNGE_LIGHT_DIMMER_PWM.clone();
-		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_3;
+		byte[] msg = LOUNGEDIMMER_MSG_PWM.clone();
+		msg[1] = LOUNGE_LIGHT_SPOTS_3;
 		msg[2] = (byte) (value & 0xFF);
 
 		sendTo(msg);
