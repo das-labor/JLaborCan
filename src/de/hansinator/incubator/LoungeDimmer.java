@@ -12,6 +12,11 @@ public class LoungeDimmer extends LAPDevice {
 
 	// switch commando byte
 	static byte CMD_SWITCH = 0x04;
+	
+	// request state commando byte
+	static byte CMD_REQ = 0x05;
+	
+	static final byte[] LAP_LOUNGE_REQUEST_STATE = new byte[] { CMD_REQ };
 
 	// light lounge dimmer switch template
 	static final byte[] LAP_LOUNGE_LIGHT_DIMMER_SWITCH = new byte[] { CMD_SWITCH, 0, 0 };
@@ -79,6 +84,11 @@ public class LoungeDimmer extends LAPDevice {
 		}
 
 		return false;
+	}
+	
+	public void requestState() {
+		byte[] msg = LAP_LOUNGE_REQUEST_STATE.clone();
+		send(msg);
 	}
 
 	public void switchAll(boolean state) {
