@@ -52,7 +52,7 @@ public class LoungeDimmer extends LAPDevice {
 	}
 
 	public LoungeDimmer(MessageBus<LAPMessage> bus, int deviceAddress) {
-		super(0x00, 0x00, deviceAddress, 0x01, bus);
+		super(deviceAddress, 0x01, 0x00, 0x00, bus);
 	}
 
 	public void setListener(LoungeStateUpdateListener listener) {

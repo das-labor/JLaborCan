@@ -23,10 +23,10 @@ public class LAPDevice implements MessageNode<LAPMessage> {
 	private final MessageBus<LAPMessage> bus;
 
 	public LAPDevice(int deviceAddress, int devicePort, int defaultDstAddr, int defaultDstPort, MessageBus<LAPMessage> bus) {
-		testAddr(defaultDstAddr, "src");
-		testAddr(deviceAddress, "dst");
-		testPort((byte) defaultDstPort, "src");
-		testPort((byte) devicePort, "dst");
+		testAddr(defaultDstAddr, "dst");
+		testAddr(deviceAddress, "dev");
+		testPort((byte) defaultDstPort, "dst");
+		testPort((byte) devicePort, "dev");
 
 		if (bus == null)
 			throw new IllegalArgumentException("Bus object is null");
@@ -40,16 +40,16 @@ public class LAPDevice implements MessageNode<LAPMessage> {
 		bus.addMessageNode(this);
 	}
 
-	public LAPDevice(byte srcAddr, byte srcPort, byte dstAddr, byte dstPort, MessageBus<LAPMessage> bus) {
-		testPort((byte) srcPort, "src");
-		testPort((byte) dstPort, "dst");
+	public LAPDevice(byte deviceAddress, byte devicePort, byte defaultDstAddr, byte defaultDstPort, MessageBus<LAPMessage> bus) {
+		testPort((byte) devicePort, "dev");
+		testPort((byte) defaultDstPort, "dst");
 		if (bus == null)
 			throw new IllegalArgumentException("Bus object is null");
 
-		this.dstAddr = srcAddr;
-		this.dstPort = (byte) (srcPort & LAPMessage.MASK_PORT);
-		this.devAddr = dstAddr;
-		this.devPort = (byte) (dstPort & LAPMessage.MASK_PORT);
+		this.dstAddr = defaultDstAddr;
+		this.dstPort = (byte) (defaultDstPort & LAPMessage.MASK_PORT);
+		this.devAddr = deviceAddress;
+		this.devPort = (byte) (devicePort & LAPMessage.MASK_PORT);
 		this.bus = bus;
 	}
 
@@ -78,11 +78,11 @@ public class LAPDevice implements MessageNode<LAPMessage> {
 	 *            message payload
 	 */
 	public void sendFrom(byte[] data) {
-		sendInternal(dstAddr, dstPort, devAddr, devPort, data);
+		sendInternal(devAddr, devPort, dstAddr, dstPort, data);
 	}
 
 	/**
-	 * Send a message from the devices default port.
+	 * Send a message from the device default port.
 	 * 
 	 * @param dstAddr
 	 *            destination address
@@ -106,7 +106,7 @@ public class LAPDevice implements MessageNode<LAPMessage> {
 	 * @param dstPort
 	 *            destination port
 	 * @param srcPort
-	 *            the devices source port
+	 *            the device source port
 	 * @param data
 	 *            message payload
 	 */

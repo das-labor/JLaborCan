@@ -117,8 +117,8 @@ public class LightMaster {
 	static final byte LAP_BASTEL_PWM_ORGATABLE = 3;
 
 	public LightMaster(MessageBus<LAPMessage> bus) {
-		powerCommander = new LAPDevice(0x00, 0x00, 0x02, 0x01, bus);
-		bastelCommander = new LAPDevice(0x00, 0x00, 0xA9, 0x01, bus);
+		powerCommander = new LAPDevice(0x02, 0x01, 0x00, 0x00, bus);
+		bastelCommander = new LAPDevice(0xA9, 0x01, 0x00, 0x00, bus);
 		loungeDimmerWall = new LoungeDimmer(bus, 0x61);
 		loungeDimmerDoor = new LoungeDimmer(bus, 0x60);
 	}

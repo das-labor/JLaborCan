@@ -38,7 +38,7 @@ public class PowerMeter extends LAPDevice {
 	@Override
 	public boolean onMessageReceived(LAPMessage msg) {
 		final byte[] pl = msg.getPayload();
-		if ((msg.getSrcAddr() == dstAddr) && (msg.getSrcPort() == dstPort)) {
+		if ((msg.getSrcAddr() == devAddr) && (msg.getSrcPort() == devPort)) {
 			switch (pl[0]) {
 			case 1:
 				prec[0] = true;
