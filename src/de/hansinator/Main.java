@@ -41,7 +41,7 @@ public class Main {
         LAPMessage msg, msg2;
         
         //klingel
-        msg2 = new LAPMessage((byte)0x04, (byte)0x00, (byte)0x00, (byte)0x01, new byte[]{5,0}, false);
+        msg2 = new LAPMessage((byte)0x04, (byte)0x00, (byte)0x00, (byte)0x01, new byte[]{5,0});
         //lapout.write(msg2);
         //System.exit(1);
 

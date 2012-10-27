@@ -127,7 +127,7 @@ public class LightMaster {
 		byte[] msg = LAP_KITCHEN_SWITCH.clone();
 		msg[2] = (byte) (state ? 1 : 0);
 
-		powerCommander.send(msg);
+		powerCommander.sendTo(msg);
 	}
 
 	public void dimKitchen(int value) {
@@ -135,7 +135,7 @@ public class LightMaster {
 		msg[2] = 0x00;
 		msg[3] = (byte) (value & 0xFF);
 
-		powerCommander.send(msg);
+		powerCommander.sendTo(msg);
 	}
 
 	public void switchLectureAll(boolean state) {
@@ -143,7 +143,7 @@ public class LightMaster {
 		msg[1] = LAP_LECTURE_VIRT_SWITCH_LIGHT_ALL;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		powerCommander.send(msg);
+		powerCommander.sendTo(msg);
 	}
 
 	public void dimLectureAll(int value) {
@@ -152,7 +152,7 @@ public class LightMaster {
 		msg[2] = 0x00;
 		msg[3] = (byte) (value & 0xFF);
 
-		powerCommander.send(msg);
+		powerCommander.sendTo(msg);
 	}
 
 	public void switchLectureBlackboard(boolean state) {
@@ -160,7 +160,7 @@ public class LightMaster {
 		msg[1] = LAP_LECTURE_SWITCH_BLACKBOARD;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		powerCommander.send(msg);
+		powerCommander.sendTo(msg);
 	}
 
 	public void dimLectureBlackboard(int value) {
@@ -169,7 +169,7 @@ public class LightMaster {
 		msg[2] = 0x00;
 		msg[3] = (byte) (value & 0xFF);
 
-		powerCommander.send(msg);
+		powerCommander.sendTo(msg);
 	}
 
 	public void switchLectureBeamer(boolean state) {
@@ -177,7 +177,7 @@ public class LightMaster {
 		msg[1] = LAP_LECTURE_SWITCH_BEAMER;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		powerCommander.send(msg);
+		powerCommander.sendTo(msg);
 	}
 
 	public void dimLectureBeamer(int value) {
@@ -186,7 +186,7 @@ public class LightMaster {
 		msg[2] = 0x00;
 		msg[3] = (byte) (value & 0xFF);
 
-		powerCommander.send(msg);
+		powerCommander.sendTo(msg);
 	}
 
 	public void switchLectureLocker(boolean state) {
@@ -194,7 +194,7 @@ public class LightMaster {
 		msg[1] = LAP_LECTURE_SWITCH_LOCKER;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		powerCommander.send(msg);
+		powerCommander.sendTo(msg);
 	}
 
 	public void dimLectureLocker(int value) {
@@ -203,7 +203,7 @@ public class LightMaster {
 		msg[2] = 0x00;
 		msg[3] = (byte) (value & 0xFF);
 
-		powerCommander.send(msg);
+		powerCommander.sendTo(msg);
 	}
 
 	public void switchLectureFlipper(boolean state) {
@@ -211,7 +211,7 @@ public class LightMaster {
 		msg[1] = LAP_LECTURE_SWITCH_FLIPPER;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		powerCommander.send(msg);
+		powerCommander.sendTo(msg);
 	}
 
 	public void dimLectureFlipper(int value) {
@@ -220,7 +220,7 @@ public class LightMaster {
 		msg[2] = 0x00;
 		msg[3] = (byte) (value & 0xFF);
 
-		powerCommander.send(msg);
+		powerCommander.sendTo(msg);
 	}
 
 	public void switchLoungeAll(boolean state) {
@@ -275,7 +275,7 @@ public class LightMaster {
 		msg[1] = LAP_BASTEL_SWITCH_PRINTER_1;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		bastelCommander.send(msg);
+		bastelCommander.sendTo(msg);
 	}
 
 	public void switchBastelPrinter2(boolean state) {
@@ -283,7 +283,7 @@ public class LightMaster {
 		msg[1] = LAP_BASTEL_SWITCH_PRINTER_2;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		bastelCommander.send(msg);
+		bastelCommander.sendTo(msg);
 	}
 
 	public void switchBastelHelmer1(boolean state) {
@@ -291,7 +291,7 @@ public class LightMaster {
 		msg[1] = LAP_BASTEL_SWITCH_HELMER_1;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		bastelCommander.send(msg);
+		bastelCommander.sendTo(msg);
 	}
 
 	public void switchBastelHelmer2(boolean state) {
@@ -299,7 +299,7 @@ public class LightMaster {
 		msg[1] = LAP_BASTEL_SWITCH_HELMER_2;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		bastelCommander.send(msg);
+		bastelCommander.sendTo(msg);
 	}
 
 	public void switchBastelBanner(boolean state) {
@@ -307,7 +307,7 @@ public class LightMaster {
 		msg[1] = LAP_BASTEL_SWITCH_BANNER;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		bastelCommander.send(msg);
+		bastelCommander.sendTo(msg);
 	}
 
 	public void switchBastelOrgatable(boolean state) {
@@ -315,7 +315,7 @@ public class LightMaster {
 		msg[1] = LAP_BASTEL_SWITCH_ORGATABLE;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		bastelCommander.send(msg);
+		bastelCommander.sendTo(msg);
 	}
 
 	public void switchBastelWindow(boolean state) {
@@ -323,7 +323,7 @@ public class LightMaster {
 		msg[1] = LAP_BASTEL_SWITCH_WINDOW;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		bastelCommander.send(msg);
+		bastelCommander.sendTo(msg);
 	}
 
 	public void dimBastelBanner(int value) {
@@ -331,7 +331,7 @@ public class LightMaster {
 		msg[1] = LAP_BASTEL_PWM_BANNER;
 		msg[2] = (byte) (value & 0xFF);
 
-		bastelCommander.send(msg);
+		bastelCommander.sendTo(msg);
 	}
 
 	public void dimBastelOrgatable(int value) {
@@ -339,7 +339,7 @@ public class LightMaster {
 		msg[1] = LAP_BASTEL_PWM_ORGATABLE;
 		msg[2] = (byte) (value & 0xFF);
 
-		bastelCommander.send(msg);
+		bastelCommander.sendTo(msg);
 	}
 
 	public void dimBastelWindow(int value) {
@@ -347,6 +347,6 @@ public class LightMaster {
 		msg[1] = LAP_BASTEL_PWM_WINDOW;
 		msg[2] = (byte) (value & 0xFF);
 
-		bastelCommander.send(msg);
+		bastelCommander.sendTo(msg);
 	}
 }

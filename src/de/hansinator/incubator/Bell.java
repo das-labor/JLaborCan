@@ -16,6 +16,6 @@ public class Bell extends LAPDevice {
 	}
 	
 	public void ring() {
-		send(MSG_BELL);
+		sendFrom(MSG_BELL);
 	}
 }

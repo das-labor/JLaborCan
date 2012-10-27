@@ -65,7 +65,7 @@ public class LoungeDimmer extends LAPDevice {
 	@Override
 	public boolean onMessageReceived(LAPMessage msg) {
 		// state message from device
-		if ((msg.getSrcAddr() == dstAddr) && (msg.getDstPort() == MSG_PORT_STATE) && (msg.getLength() == 5)) {
+		if ((msg.getSrcAddr() == devAddr) && (msg.getDstPort() == MSG_PORT_STATE) && (msg.getLength() == 5)) {
 			final byte[] pl = msg.getPayload();
 
 			// decode switch state and save  pwm vals
@@ -88,7 +88,7 @@ public class LoungeDimmer extends LAPDevice {
 	
 	public void requestState() {
 		byte[] msg = LAP_LOUNGE_REQUEST_STATE.clone();
-		send(msg);
+		sendTo(msg);
 	}
 
 	public void switchAll(boolean state) {
@@ -118,7 +118,7 @@ public class LoungeDimmer extends LAPDevice {
 		msg[1] = LAP_LOUNGE_LIGHT_NEON;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		send(msg);
+		sendTo(msg);
 		dimNeonTube(0x7F);
 	}
 
@@ -127,7 +127,7 @@ public class LoungeDimmer extends LAPDevice {
 		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_1;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		send(msg);
+		sendTo(msg);
 		dimSpot1(0x7F);
 	}
 
@@ -136,7 +136,7 @@ public class LoungeDimmer extends LAPDevice {
 		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_2;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		send(msg);
+		sendTo(msg);
 		dimSpot2(0x7F);
 	}
 
@@ -145,7 +145,7 @@ public class LoungeDimmer extends LAPDevice {
 		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_3;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		send(msg);
+		sendTo(msg);
 		dimSpot3(0x7F);
 	}
 
@@ -154,7 +154,7 @@ public class LoungeDimmer extends LAPDevice {
 		msg[1] = LAP_LOUNGE_LIGHT_NEON;
 		msg[2] = (byte) (value & 0xFF);
 
-		send(msg);
+		sendTo(msg);
 	}
 
 	public void dimSpot1(int value) {
@@ -162,7 +162,7 @@ public class LoungeDimmer extends LAPDevice {
 		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_1;
 		msg[2] = (byte) (value & 0xFF);
 
-		send(msg);
+		sendTo(msg);
 	}
 
 	public void dimSpot2(int value) {
@@ -170,7 +170,7 @@ public class LoungeDimmer extends LAPDevice {
 		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_2;
 		msg[2] = (byte) (value & 0xFF);
 
-		send(msg);
+		sendTo(msg);
 	}
 
 	public void dimSpot3(int value) {
@@ -178,7 +178,7 @@ public class LoungeDimmer extends LAPDevice {
 		msg[1] = LAP_LOUNGE_LIGHT_SPOTS_3;
 		msg[2] = (byte) (value & 0xFF);
 
-		send(msg);
+		sendTo(msg);
 	}
 
 	public static void main(String[] args) {
