@@ -6,10 +6,10 @@ import de.hansinator.message.bus.MessageBus;
 import de.hansinator.message.protocol.LAPMessage;
 
 public class LoungeDimmer extends LAPDevice {
-	
+
 	// command port
 	static byte PORT_CMD = 0x01;
-	
+
 	// state message port
 	static byte PORT_STATE = 0x03;
 
@@ -18,10 +18,10 @@ public class LoungeDimmer extends LAPDevice {
 
 	// switch commando byte
 	static byte CMD_SWITCH = 0x04;
-	
+
 	// request state commando byte
 	static byte CMD_REQ = 0x05;
-	
+
 	// request state template message
 	static final byte[] LOUNGEDIMMER_MSG_REQUESTSTATE = new byte[] { CMD_REQ };
 
@@ -46,7 +46,7 @@ public class LoungeDimmer extends LAPDevice {
 	private final int pwmVals[] = new int[4];
 
 	private final boolean switchVals[] = new boolean[4];
-	
+
 	private final Object lock = new Object();
 
 	private volatile LoungeStateUpdateListener listener = null;
@@ -60,8 +60,7 @@ public class LoungeDimmer extends LAPDevice {
 	}
 
 	public void setListener(LoungeStateUpdateListener listener) {
-		synchronized(lock)
-		{
+		synchronized (lock) {
 			this.listener = listener;
 		}
 	}
@@ -72,24 +71,21 @@ public class LoungeDimmer extends LAPDevice {
 		if ((msg.getSrcAddr() == devAddr) && (msg.getDstPort() == PORT_STATE) && (msg.getLength() == 5)) {
 			final byte[] pl = msg.getPayload();
 
-			// decode switch state and save  pwm vals
-			for (int i = 0; i < switchVals.length; i++)
-			{
+			// decode switch state and save pwm vals
+			for (int i = 0; i < switchVals.length; i++) {
 				switchVals[i] = (pl[0] & (1 << i)) == 1;
-				pwmVals[i] = (int)pl[i+1] & 0xff;
+				pwmVals[i] = (int) pl[i + 1] & 0xff;
 			}
 
-			synchronized(lock)
-			{
+			synchronized (lock) {
 				if (listener != null)
 					listener.onUpdate(switchVals, pwmVals);
 			}
 			return true;
 		}
-
 		return false;
 	}
-	
+
 	public void requestState() {
 		byte[] msg = LOUNGEDIMMER_MSG_REQUESTSTATE.clone();
 		sendTo(msg);
@@ -207,11 +203,12 @@ public class LoungeDimmer extends LAPDevice {
 
 				@Override
 				public void onUpdate(boolean[] switchVals, int[] pwmVals) {
-					for (int i = 0; i < 4; i++)
+					for (int i = 0; i < switchVals.length; i++)
 						System.out.println("door " + i + ": " + (switchVals[i] ? "on" : "off") + ", " + pwmVals[i]);
 				}
 			});
-			while(true);
+			while (true)
+				;
 		} else
 			System.out.println("failed to up gateway");
 	}

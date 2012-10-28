@@ -1,30 +1,30 @@
 package de.hansinator.incubator;
 
+import java.util.EventListener;
+
 import de.hansinator.message.bus.MessageBus;
 import de.hansinator.message.protocol.LAPMessage;
 
 public class BastelControl extends LAPDevice {
-	//static byte BASTELCMD_ADDR = -87;
-	
 	// command port
 	static byte PORT_CMD = 0x01;
-	
+
 	// state message port
 	static byte PORT_STATE = 0x03;
-	
-	//switch command byte
+
+	// switch command byte
 	static byte CMD_SW = 0x00;
-	
+
 	// pwm command byte
 	static byte CMD_PWM = 0x01;
-	
+
 	// set motion threshold command
 	static byte CMD_SET_MOTION_THRESH = 0x02;
-	
+
 	// request state command
 	static byte CMD_REQ = 0x03;
-	
-	//request state template message
+
+	// request state template message
 	static final byte[] BASTEL_MSG_REQUESTSTATE = new byte[] { CMD_REQ };
 
 	// light bastel switch template
@@ -63,24 +63,61 @@ public class BastelControl extends LAPDevice {
 	// light bastel orgatable pwm object
 	static final byte BASTEL_PWM_ORGATABLE = 3;
 
+	private final int pwmVals[] = new int[3];
+
+	private final boolean switchVals[] = new boolean[8];
+
+	private final Object lock = new Object();
+
+	private volatile BastelStateUpdateListener listener = null;
+
+	public interface BastelStateUpdateListener extends EventListener {
+		public void onUpdate(boolean[] switchVals, int[] pwmVals);
+	}
+
 	public BastelControl(MessageBus<LAPMessage> bus) {
-		this(bus, LAPAddressBook.BASTELCONTROL);
+		this(bus, LAPAddressBook.BASTELCONTROL & 0xFF);
 	}
 
 	public BastelControl(MessageBus<LAPMessage> bus, int deviceAddress) {
 		super(deviceAddress, 0x01, 0x00, 0x00, bus);
 	}
-	
+
+	public void setListener(BastelStateUpdateListener listener) {
+		synchronized (lock) {
+			this.listener = listener;
+		}
+	}
+
 	@Override
 	public boolean onMessageReceived(LAPMessage msg) {
-		return super.onMessageReceived(msg);
+		// state message from device
+		if ((msg.getSrcAddr() == devAddr) && (msg.getDstPort() == PORT_STATE) && (msg.getLength() == 4)) {
+			final byte[] pl = msg.getPayload();
+
+			// decode switch state and save pwm vals
+			for (int i = 0; i < switchVals.length; i++)
+				switchVals[i] = (pl[0] & (1 << i)) == 1;
+
+			// save pwm vals
+			for (int i = 0; i < pwmVals.length; i++)
+				pwmVals[i] = (int) pl[i + 1] & 0xff;
+
+			synchronized (lock) {
+				if (listener != null)
+					listener.onUpdate(switchVals, pwmVals);
+			}
+			return true;
+		}
+
+		return false;
 	}
-	
+
 	public void requestState() {
 		byte[] msg = BASTEL_MSG_REQUESTSTATE.clone();
 		sendTo(msg);
 	}
-	
+
 	public void switchBastelAll(boolean state) {
 		switchBastelPrinter1(state);
 		switchBastelPrinter2(state);
@@ -175,5 +212,30 @@ public class BastelControl extends LAPDevice {
 		msg[2] = (byte) (value & 0xFF);
 
 		sendTo(msg);
+	}
+
+	public static void main(String[] args) {
+		// create message bus
+		MessageBus<LAPMessage> bus = new MessageBus<LAPMessage>();
+
+		BastelControl bastelControl = new BastelControl(bus);
+
+		// create gateway
+		LAPTCPCanGateway gateway = LAPTCPCanGateway.makeGateway(bus, "10.0.1.2", 2342, true);
+		if (gateway.up(10000, true)) {
+			bastelControl.setListener(new BastelStateUpdateListener() {
+
+				@Override
+				public void onUpdate(boolean[] switchVals, int[] pwmVals) {
+					for (int i = 0; i < switchVals.length; i++)
+						System.out.println("switch " + i + ": " + (switchVals[i] ? "on" : "off"));
+					for (int i = 0; i < pwmVals.length; i++)
+						System.out.println("pwm " + i + ": " + pwmVals[i]);
+				}
+			});
+			while (true)
+				;
+		} else
+			System.out.println("failed to up gateway");
 	}
 }
