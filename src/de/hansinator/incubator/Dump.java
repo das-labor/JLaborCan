@@ -49,7 +49,7 @@ public class Dump {
 			sb.append("\nData: ");
 			for (int i = 0; i < msg.getLength(); i++)
 			{
-				sb.append(String.format("%02X", msg.getLength()));
+				sb.append(String.format("%02X", msg.getPayload()[i]));
 				if(i != msg.getLength() -1)
 					sb.append(", ");
 			}

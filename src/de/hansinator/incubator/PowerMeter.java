@@ -22,7 +22,7 @@ public class PowerMeter extends LAPDevice {
 	}
 
 	public PowerMeter(MessageBus<LAPMessage> bus) {
-		this(bus, 0x05);
+		this(bus, LAPAddressBook.POWERMETER_LAB);
 	}
 
 	public PowerMeter(MessageBus<LAPMessage> bus, int deviceAddress) {

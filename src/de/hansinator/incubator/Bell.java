@@ -8,7 +8,7 @@ public class Bell extends LAPDevice {
 	private static final byte[] MSG_BELL = new byte[]{5,0};
 
 	public Bell(MessageBus<LAPMessage> bus) {
-		this(bus, 0x04);
+		this(bus, LAPAddressBook.HAUPTSCHALTER);
 	}
 
 	public Bell(MessageBus<LAPMessage> bus, int deviceAddress) {

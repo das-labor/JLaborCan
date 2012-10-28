@@ -6,6 +6,12 @@ import de.hansinator.message.bus.MessageBus;
 import de.hansinator.message.protocol.LAPMessage;
 
 public class LoungeDimmer extends LAPDevice {
+	
+	// command port
+	static byte PORT_CMD = 0x01;
+	
+	// state message port
+	static byte PORT_STATE = 0x03;
 
 	// pwm commando byte
 	static byte CMD_PWM = 0x01;
@@ -16,6 +22,7 @@ public class LoungeDimmer extends LAPDevice {
 	// request state commando byte
 	static byte CMD_REQ = 0x05;
 	
+	// request state template message
 	static final byte[] LOUNGEDIMMER_MSG_REQUESTSTATE = new byte[] { CMD_REQ };
 
 	// light lounge dimmer switch template
@@ -36,9 +43,6 @@ public class LoungeDimmer extends LAPDevice {
 	// light lounge neon pwm object
 	static final byte LOUNGE_LIGHT_NEON = 0x03;
 
-	// port of state message
-	static final byte MSG_PORT_STATE = 0x03;
-
 	private final int pwmVals[] = new int[4];
 
 	private final boolean switchVals[] = new boolean[4];
@@ -52,7 +56,7 @@ public class LoungeDimmer extends LAPDevice {
 	}
 
 	public LoungeDimmer(MessageBus<LAPMessage> bus, int deviceAddress) {
-		super(deviceAddress, 0x01, 0x00, 0x00, bus);
+		super(deviceAddress, PORT_CMD, 0x00, 0x00, bus);
 	}
 
 	public void setListener(LoungeStateUpdateListener listener) {
@@ -65,7 +69,7 @@ public class LoungeDimmer extends LAPDevice {
 	@Override
 	public boolean onMessageReceived(LAPMessage msg) {
 		// state message from device
-		if ((msg.getSrcAddr() == devAddr) && (msg.getDstPort() == MSG_PORT_STATE) && (msg.getLength() == 5)) {
+		if ((msg.getSrcAddr() == devAddr) && (msg.getDstPort() == PORT_STATE) && (msg.getLength() == 5)) {
 			final byte[] pl = msg.getPayload();
 
 			// decode switch state and save  pwm vals

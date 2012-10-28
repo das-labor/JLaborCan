@@ -4,11 +4,8 @@ import de.hansinator.message.bus.MessageBus;
 import de.hansinator.message.protocol.LAPMessage;
 
 public class PowerCommander extends LAPDevice {
-	
-	// default power commander address
-	final static byte POWERCMD_ADDR = 0x02;
 
-	// default power commande port
+	// default power commander port
 	final static byte POWERCMD_PORT = 0x01;
 
 	// switch command
@@ -66,7 +63,7 @@ public class PowerCommander extends LAPDevice {
 	static final byte KITCHEN_PWM = 0x05;
 
 	public PowerCommander(MessageBus<LAPMessage> bus) {
-		this(bus, POWERCMD_ADDR);
+		this(bus, LAPAddressBook.POWERCOMMANDER);
 	}
 
 	public PowerCommander(MessageBus<LAPMessage> bus, int deviceAddress) {
