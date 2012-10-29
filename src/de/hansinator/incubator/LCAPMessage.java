@@ -88,16 +88,15 @@ public class LCAPMessage extends CANMessage {
 
 	public final static MessageFactory<LCAPMessage> factory = new MessageFactory<LCAPMessage>() {
 
-		// XXX: this must be a loop that discards remote frames, otherwise clients might get
-		// confused
 		public LCAPMessage assemble(InputStream in) throws IOException {
 			CANMessage msg = CANMessage.factory.assemble(in);
-			byte srcAddr = (byte) ((msg.id >> 8) & 0xFF);
-			byte dstAddr = (byte) (msg.id & 0xFF);
-			byte srcPort = (byte) ((msg.id >> 23) & 0x3F);
-			byte dstPort = (byte) (((msg.id >> 16) & 0x0F) | ((msg.id >> 17) & 0x30));
+			byte dstAddr = (byte) ((msg.id >> 21) & 0xFF);
+			byte subAddr = (byte) ((msg.id >> 11) & 0x3FF);
+			byte srcAddr = (byte) ((msg.id >> 3) & 0xFF);
+			boolean ack = (msg.id & 0x02) == 0x02;
+			boolean large = (msg.id & 0x01) == 0x01;
 
-			return new LCAPMessage(srcAddr, srcPort, dstAddr, dstPort, msg.getPayload());
+			return new LCAPMessage(srcAddr, dstAddr, subAddr, ack, large, msg.isRemoteFrame(), msg.getPayload());
 		}
 	};
 }
