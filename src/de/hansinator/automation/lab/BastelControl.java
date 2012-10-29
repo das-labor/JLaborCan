@@ -1,7 +1,9 @@
-package de.hansinator.incubator;
+package de.hansinator.automation.lab;
 
 import java.util.EventListener;
 
+import de.hansinator.automation.lap.LAPDevice;
+import de.hansinator.automation.lap.LAPTCPCanGateway;
 import de.hansinator.message.bus.MessageBus;
 import de.hansinator.message.protocol.LAPMessage;
 
@@ -76,11 +78,11 @@ public class BastelControl extends LAPDevice {
 	}
 
 	public BastelControl(MessageBus<LAPMessage> bus) {
-		this(bus, LAPAddressBook.BASTELCONTROL & 0xFF);
+		this(bus, LabAddressBook.BASTELCONTROL & 0xFF);
 	}
 
 	public BastelControl(MessageBus<LAPMessage> bus, int deviceAddress) {
-		super(deviceAddress, 0x01, 0x00, 0x00, bus);
+		super(bus, deviceAddress, 0x01);
 	}
 
 	public void setListener(BastelStateUpdateListener listener) {
@@ -90,9 +92,9 @@ public class BastelControl extends LAPDevice {
 	}
 
 	@Override
-	public boolean onMessageReceived(LAPMessage msg) {
+	protected boolean onMessageFromDevice(LAPMessage msg) {
 		// state message from device
-		if ((msg.getSrcAddr() == devAddr) && (msg.getDstPort() == PORT_STATE) && (msg.getLength() == 4)) {
+		if ((msg.getDstPort() == PORT_STATE) && (msg.getLength() == 4)) {
 			final byte[] pl = msg.getPayload();
 
 			// decode switch state and save pwm vals
@@ -113,9 +115,14 @@ public class BastelControl extends LAPDevice {
 		return false;
 	}
 
+	@Override
+	protected boolean onMessageToDevice(LAPMessage message) {
+		return false;
+	}
+
 	public void requestState() {
 		byte[] msg = BASTEL_MSG_REQUESTSTATE.clone();
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void switchBastelAll(boolean state) {
@@ -139,7 +146,7 @@ public class BastelControl extends LAPDevice {
 		msg[1] = BASTEL_SWITCH_PRINTER_1;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void switchBastelPrinter2(boolean state) {
@@ -147,7 +154,7 @@ public class BastelControl extends LAPDevice {
 		msg[1] = BASTEL_SWITCH_PRINTER_2;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void switchBastelHelmer1(boolean state) {
@@ -155,7 +162,7 @@ public class BastelControl extends LAPDevice {
 		msg[1] = BASTEL_SWITCH_HELMER_1;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void switchBastelHelmer2(boolean state) {
@@ -163,7 +170,7 @@ public class BastelControl extends LAPDevice {
 		msg[1] = BASTEL_SWITCH_HELMER_2;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void switchBastelBanner(boolean state) {
@@ -171,7 +178,7 @@ public class BastelControl extends LAPDevice {
 		msg[1] = BASTEL_SWITCH_BANNER;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void switchBastelOrgatable(boolean state) {
@@ -179,7 +186,7 @@ public class BastelControl extends LAPDevice {
 		msg[1] = BASTEL_SWITCH_ORGATABLE;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void switchBastelWindow(boolean state) {
@@ -187,7 +194,7 @@ public class BastelControl extends LAPDevice {
 		msg[1] = BASTEL_SWITCH_WINDOW;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void dimBastelBanner(int value) {
@@ -195,7 +202,7 @@ public class BastelControl extends LAPDevice {
 		msg[1] = BASTEL_PWM_BANNER;
 		msg[2] = (byte) (value & 0xFF);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void dimBastelOrgatable(int value) {
@@ -203,7 +210,7 @@ public class BastelControl extends LAPDevice {
 		msg[1] = BASTEL_PWM_ORGATABLE;
 		msg[2] = (byte) (value & 0xFF);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void dimBastelWindow(int value) {
@@ -211,7 +218,7 @@ public class BastelControl extends LAPDevice {
 		msg[1] = BASTEL_PWM_WINDOW;
 		msg[2] = (byte) (value & 0xFF);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public static void main(String[] args) {

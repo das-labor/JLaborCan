@@ -1,7 +1,9 @@
-package de.hansinator.incubator;
+package de.hansinator.automation.lab;
 
 import java.util.EventListener;
 
+import de.hansinator.automation.lap.LAPDevice;
+import de.hansinator.automation.lap.LAPTCPCanGateway;
 import de.hansinator.message.bus.MessageBus;
 import de.hansinator.message.protocol.LAPMessage;
 
@@ -56,7 +58,7 @@ public class LoungeDimmer extends LAPDevice {
 	}
 
 	public LoungeDimmer(MessageBus<LAPMessage> bus, int deviceAddress) {
-		super(deviceAddress, PORT_CMD, 0x00, 0x00, bus);
+		super(bus, deviceAddress, PORT_CMD);
 	}
 
 	public void setListener(LoungeStateUpdateListener listener) {
@@ -66,9 +68,9 @@ public class LoungeDimmer extends LAPDevice {
 	}
 
 	@Override
-	public boolean onMessageReceived(LAPMessage msg) {
+	public boolean onMessageFromDevice(LAPMessage msg) {
 		// state message from device
-		if ((msg.getSrcAddr() == devAddr) && (msg.getDstPort() == PORT_STATE) && (msg.getLength() == 5)) {
+		if ((msg.getDstPort() == PORT_STATE) && (msg.getLength() == 5)) {
 			final byte[] pl = msg.getPayload();
 
 			// decode switch state and save pwm vals
@@ -85,10 +87,15 @@ public class LoungeDimmer extends LAPDevice {
 		}
 		return false;
 	}
+	
+	@Override
+	protected boolean onMessageToDevice(LAPMessage message) {
+		return false;
+	}
 
 	public void requestState() {
 		byte[] msg = LOUNGEDIMMER_MSG_REQUESTSTATE.clone();
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void switchAll(boolean state) {
@@ -118,7 +125,7 @@ public class LoungeDimmer extends LAPDevice {
 		msg[1] = LOUNGE_LIGHT_NEON;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 		dimNeonTube(0x7F);
 	}
 
@@ -127,7 +134,7 @@ public class LoungeDimmer extends LAPDevice {
 		msg[1] = LOUNGE_LIGHT_SPOTS_1;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 		dimSpot1(0x7F);
 	}
 
@@ -136,7 +143,7 @@ public class LoungeDimmer extends LAPDevice {
 		msg[1] = LOUNGE_LIGHT_SPOTS_2;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 		dimSpot2(0x7F);
 	}
 
@@ -145,7 +152,7 @@ public class LoungeDimmer extends LAPDevice {
 		msg[1] = LOUNGE_LIGHT_SPOTS_3;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 		dimSpot3(0x7F);
 	}
 
@@ -154,7 +161,7 @@ public class LoungeDimmer extends LAPDevice {
 		msg[1] = LOUNGE_LIGHT_NEON;
 		msg[2] = (byte) (value & 0xFF);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void dimSpot1(int value) {
@@ -162,7 +169,7 @@ public class LoungeDimmer extends LAPDevice {
 		msg[1] = LOUNGE_LIGHT_SPOTS_1;
 		msg[2] = (byte) (value & 0xFF);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void dimSpot2(int value) {
@@ -170,7 +177,7 @@ public class LoungeDimmer extends LAPDevice {
 		msg[1] = LOUNGE_LIGHT_SPOTS_2;
 		msg[2] = (byte) (value & 0xFF);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void dimSpot3(int value) {
@@ -178,7 +185,7 @@ public class LoungeDimmer extends LAPDevice {
 		msg[1] = LOUNGE_LIGHT_SPOTS_3;
 		msg[2] = (byte) (value & 0xFF);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public static void main(String[] args) {

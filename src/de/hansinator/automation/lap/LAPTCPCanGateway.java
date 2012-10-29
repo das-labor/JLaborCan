@@ -1,4 +1,4 @@
-package de.hansinator.incubator;
+package de.hansinator.automation.lap;
 
 import java.io.IOException;
 

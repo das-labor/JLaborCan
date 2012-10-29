@@ -1,4 +1,4 @@
-package de.hansinator.incubator;
+package de.hansinator.automation.lab;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author hansinator
  *
  */
-public class LAPAddressBook {
+public class LabAddressBook {
 	public final static byte CAN_GATEWAY = 0x00;
 	public final static byte POWERCOMMANDER = 0x02;
 	public final static byte POWERCOMMANDER_TEST = 0x03;

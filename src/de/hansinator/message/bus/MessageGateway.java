@@ -85,4 +85,9 @@ public abstract class MessageGateway<BUS extends MessageObject, EP extends Messa
 			return false;
 		}
 	}
+	
+	@Override
+	public MessageBus<BUS> getBus() {
+		return bus;
+	}
 }

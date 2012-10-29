@@ -1,5 +1,6 @@
-package de.hansinator.incubator;
+package de.hansinator.automation.lab;
 
+import de.hansinator.automation.lap.LAPDevice;
 import de.hansinator.message.bus.MessageBus;
 import de.hansinator.message.protocol.LAPMessage;
 
@@ -63,11 +64,11 @@ public class PowerCommander extends LAPDevice {
 	static final byte KITCHEN_PWM = 0x05;
 
 	public PowerCommander(MessageBus<LAPMessage> bus) {
-		this(bus, LAPAddressBook.POWERCOMMANDER);
+		this(bus, LabAddressBook.POWERCOMMANDER);
 	}
 
 	public PowerCommander(MessageBus<LAPMessage> bus, int deviceAddress) {
-		super(deviceAddress, POWERCMD_PORT, 0x00, 0x00, bus);
+		super(bus, deviceAddress, POWERCMD_PORT);
 	}
 	
 	public void switchKitchen(boolean state) {
@@ -75,7 +76,7 @@ public class PowerCommander extends LAPDevice {
 		msg[1] = KITCHEN_SWITCH;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void dimKitchen(int value) {
@@ -84,7 +85,7 @@ public class PowerCommander extends LAPDevice {
 		msg[2] = 0x00;
 		msg[3] = (byte) (value & 0xFF);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void switchLectureAll(boolean state) {
@@ -92,7 +93,7 @@ public class PowerCommander extends LAPDevice {
 		msg[1] = LECTURE_VIRT_SWITCH_LIGHT_ALL;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void dimLectureAll(int value) {
@@ -101,7 +102,7 @@ public class PowerCommander extends LAPDevice {
 		msg[2] = 0x00;
 		msg[3] = (byte) (value & 0xFF);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void switchLectureBlackboard(boolean state) {
@@ -109,7 +110,7 @@ public class PowerCommander extends LAPDevice {
 		msg[1] = LECTURE_SWITCH_BLACKBOARD;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void dimLectureBlackboard(int value) {
@@ -118,7 +119,7 @@ public class PowerCommander extends LAPDevice {
 		msg[2] = 0x00;
 		msg[3] = (byte) (value & 0xFF);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void switchLectureBeamer(boolean state) {
@@ -126,7 +127,7 @@ public class PowerCommander extends LAPDevice {
 		msg[1] = LECTURE_SWITCH_BEAMER;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void dimLectureBeamer(int value) {
@@ -135,7 +136,7 @@ public class PowerCommander extends LAPDevice {
 		msg[2] = 0x00;
 		msg[3] = (byte) (value & 0xFF);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void switchLectureLocker(boolean state) {
@@ -143,7 +144,7 @@ public class PowerCommander extends LAPDevice {
 		msg[1] = LECTURE_SWITCH_LOCKER;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void dimLectureLocker(int value) {
@@ -152,7 +153,7 @@ public class PowerCommander extends LAPDevice {
 		msg[2] = 0x00;
 		msg[3] = (byte) (value & 0xFF);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void switchLectureFlipper(boolean state) {
@@ -160,7 +161,7 @@ public class PowerCommander extends LAPDevice {
 		msg[1] = LECTURE_SWITCH_FLIPPER;
 		msg[2] = (byte) (state ? 1 : 0);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
 	}
 
 	public void dimLectureFlipper(int value) {
@@ -169,6 +170,16 @@ public class PowerCommander extends LAPDevice {
 		msg[2] = 0x00;
 		msg[3] = (byte) (value & 0xFF);
 
-		sendTo(msg);
+		sendTo(0x00, 0x00, msg);
+	}
+
+	@Override
+	protected boolean onMessageToDevice(LAPMessage message) {
+		return false;
+	}
+
+	@Override
+	protected boolean onMessageFromDevice(LAPMessage message) {
+		return false;
 	}
 }

@@ -1,7 +1,8 @@
-package de.hansinator.incubator;
+package de.hansinator.automation.lab;
 
 import java.util.EventListener;
 
+import de.hansinator.automation.lap.LAPDevice;
 import de.hansinator.message.bus.MessageBus;
 import de.hansinator.message.protocol.LAPMessage;
 
@@ -22,11 +23,11 @@ public class PowerMeter extends LAPDevice {
 	}
 
 	public PowerMeter(MessageBus<LAPMessage> bus) {
-		this(bus, LAPAddressBook.POWERMETER_LAB);
+		this(bus, LabAddressBook.POWERMETER_LAB);
 	}
 
 	public PowerMeter(MessageBus<LAPMessage> bus, int deviceAddress) {
-		super(deviceAddress, 0x3c, 0x00, 0x3c, bus);
+		super(bus, deviceAddress, 0x3c);
 	}
 
 	public void setListener(PowerUpdateListener listener) {
@@ -36,9 +37,9 @@ public class PowerMeter extends LAPDevice {
 	}
 
 	@Override
-	public boolean onMessageReceived(LAPMessage msg) {
+	protected boolean onMessageFromDevice(LAPMessage msg) {
 		final byte[] pl = msg.getPayload();
-		if ((msg.getSrcAddr() == devAddr) && (msg.getSrcPort() == devPort)) {
+		if (msg.getSrcPort() == devPort) {
 			switch (pl[0]) {
 			case 1:
 				prec[0] = true;
@@ -68,5 +69,10 @@ public class PowerMeter extends LAPDevice {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	protected boolean onMessageToDevice(LAPMessage message) {
+		return false;
 	}
 }

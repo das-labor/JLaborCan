@@ -1,4 +1,4 @@
-package de.hansinator.incubator;
+package de.hansinator.automation.lab;
 
 import de.hansinator.message.bus.MessageBus;
 import de.hansinator.message.protocol.LAPMessage;
@@ -16,8 +16,8 @@ public class LightMaster {
 	public LightMaster(MessageBus<LAPMessage> bus) {
 		powerCommander = new PowerCommander(bus);
 		bastelControl = new BastelControl(bus);
-		loungeDimmerWall = new LoungeDimmer(bus, LAPAddressBook.LOUNGEDIMMER_WALL);
-		loungeDimmerDoor = new LoungeDimmer(bus, LAPAddressBook.LOUNGEDIMMER_DOOR);
+		loungeDimmerWall = new LoungeDimmer(bus, LabAddressBook.LOUNGEDIMMER_WALL);
+		loungeDimmerDoor = new LoungeDimmer(bus, LabAddressBook.LOUNGEDIMMER_DOOR);
 	}
 
 	public void switchLoungeAll(boolean state) {

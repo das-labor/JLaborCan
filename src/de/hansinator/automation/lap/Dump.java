@@ -1,8 +1,9 @@
-package de.hansinator.incubator;
+package de.hansinator.automation.lap;
 
 import java.io.IOException;
 import java.net.Socket;
 
+import de.hansinator.automation.lab.LabAddressBook;
 import de.hansinator.message.io.MessageInput;
 import de.hansinator.message.io.MessageInputAdapter;
 import de.hansinator.message.io.MessageInputFilter;
@@ -35,8 +36,8 @@ public class Dump {
 		while ((msg = lapin.read()) != null) {
 			StringBuilder sb = new StringBuilder();
 			String from, to;
-			from = LAPAddressBook.names.get(msg.getSrcAddr());
-			to = LAPAddressBook.names.get(msg.getDstAddr());
+			from = LabAddressBook.names.get(msg.getSrcAddr());
+			to = LabAddressBook.names.get(msg.getDstAddr());
 			if (from == null)
 				from = "unknwown";
 			if (to == null)
