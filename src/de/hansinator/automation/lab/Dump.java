@@ -1,9 +1,8 @@
-package de.hansinator.automation.lap;
+package de.hansinator.automation.lab;
 
 import java.io.IOException;
 import java.net.Socket;
 
-import de.hansinator.automation.lab.LabAddressBook;
 import de.hansinator.message.io.MessageInput;
 import de.hansinator.message.io.MessageInputAdapter;
 import de.hansinator.message.io.MessageInputFilter;
