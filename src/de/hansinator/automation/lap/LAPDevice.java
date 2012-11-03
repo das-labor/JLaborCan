@@ -1,5 +1,7 @@
 package de.hansinator.automation.lap;
 
+import java.util.EventListener;
+
 import de.hansinator.automation.lab.LabAddressBook;
 import de.hansinator.message.bus.BaseNode;
 import de.hansinator.message.bus.MessageBus;
@@ -7,7 +9,8 @@ import de.hansinator.message.protocol.LAPMessage;
 
 /**
  * An abstract LAP device on a bus. Concrete devices implement behavior for message retrieval and
- * methods to send messages.
+ * methods to send messages. Each "public" value-bearing object of the lap device shall be
+ * represented by a unique object key that is used to notify listeners of value changes.
  * 
  * @author hansinator
  * 
@@ -17,6 +20,31 @@ public abstract class LAPDevice extends BaseNode<LAPMessage> {
 	protected final byte devAddr;
 
 	protected final byte devPort;
+
+	protected final Object listenerLock = new Object();
+
+	private volatile LAPStateUpdateListener listener = null;
+
+	/**
+	 * State update listener interface
+	 * 
+	 * @author hansinator
+	 * 
+	 */
+	public interface LAPStateUpdateListener extends EventListener {
+		/**
+		 * Called when the device state is being updated, i.e. a given key-value pair of the devices
+		 * variable/object-set is changed by an external message.
+		 * 
+		 * @param key
+		 *            object index
+		 * @param value
+		 *            new object value
+		 * @param lastValue
+		 *            previous value
+		 */
+		public void onUpdate(int key, Object value, Object lastValue);
+	}
 
 	/**
 	 * Construct a LAP device on a bus with the given address and default port.
@@ -70,6 +98,19 @@ public abstract class LAPDevice extends BaseNode<LAPMessage> {
 			return "unknown";
 		else
 			return name;
+	}
+
+	public void setListener(LAPStateUpdateListener listener) {
+		synchronized (listenerLock) {
+			this.listener = listener;
+		}
+	}
+
+	protected void notifyListeners(int key, Object value, Object lastValue) {
+		synchronized (listenerLock) {
+			if (listener != null)
+				listener.onUpdate(key, value, lastValue);
+		}
 	}
 
 	@Override
