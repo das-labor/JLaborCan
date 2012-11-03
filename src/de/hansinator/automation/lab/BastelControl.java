@@ -255,7 +255,7 @@ public class BastelControl extends LAPDevice {
 
 		// create gateway
 		LAPTCPCanGateway gateway = LAPTCPCanGateway.makeGateway(bus, "10.0.1.2", 2342, true);
-		if (gateway.up(10000, true)) {
+		if (gateway.blockingStart(10000)) {
 			bastelControl.setListener(new LAPStateUpdateListener() {
 
 				@Override
