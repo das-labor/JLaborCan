@@ -281,7 +281,7 @@ public class AsyncWriteMessageProxy<T extends MessageObject> implements MessageE
 			while (starting)
 				Thread.yield();
 
-		return autoRestart;
+		return running;
 	}
 
 	private boolean enqueueMessageWrite(T msg) throws InterruptedException {

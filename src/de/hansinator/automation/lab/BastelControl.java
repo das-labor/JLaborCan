@@ -265,7 +265,7 @@ public class BastelControl extends LAPDevice {
 			});
 			bastelControl.requestState();
 			while (true)
-				;
+				Thread.yield();
 		} else
 			System.out.println("failed to up gateway");
 	}

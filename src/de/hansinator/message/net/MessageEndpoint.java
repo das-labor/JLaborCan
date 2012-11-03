@@ -3,7 +3,6 @@ package de.hansinator.message.net;
 import java.io.IOException;
 
 import de.hansinator.message.MessageObject;
-import de.hansinator.message.io.MessageFactory;
 import de.hansinator.message.io.MessageInput;
 import de.hansinator.message.io.MessageOutput;
 

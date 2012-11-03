@@ -70,7 +70,7 @@ public class LoungeDimmer extends LAPDevice {
 		omap_pwm.put(new Byte(OBJ_SPOTS_1), Objects.pwm_spot1.ordinal());
 		omap_pwm.put(new Byte(OBJ_SPOTS_2), Objects.pwm_spot2.ordinal());
 		omap_pwm.put(new Byte(OBJ_SPOTS_3), Objects.pwm_spot3.ordinal());
-		omap_pwm.put(new Byte(OBJ_NEON), Objects.switch_neon.ordinal());
+		omap_pwm.put(new Byte(OBJ_NEON), Objects.pwm_neon.ordinal());
 	}
 
 	public enum Objects {
@@ -79,6 +79,14 @@ public class LoungeDimmer extends LAPDevice {
 
 	public LoungeDimmer(MessageBus<LAPMessage> bus, int deviceAddress) {
 		super(bus, deviceAddress, PORT_CMD);
+	}
+	
+	public int[] getPwmVals() {
+		return pwmVals;
+	}
+	
+	public boolean[] getSwitchVals() {
+		return switchVals;
 	}
 
 	@Override
@@ -247,7 +255,7 @@ public class LoungeDimmer extends LAPDevice {
 			loungeDimmerDoor.requestState();
 			loungeDimmerWall.requestState();
 			while (true)
-				;
+				Thread.yield();
 		} else
 			System.out.println("failed to up gateway");
 	}
