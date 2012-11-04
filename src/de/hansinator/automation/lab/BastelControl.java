@@ -4,7 +4,6 @@ import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.hansinator.automation.lab.LoungeDimmer.Objects;
 import de.hansinator.automation.lap.LAPDevice;
 import de.hansinator.automation.lap.LAPTCPCanGateway;
 import de.hansinator.message.bus.MessageBus;
@@ -120,7 +119,7 @@ public class BastelControl extends LAPDevice {
 				if (switchVals[i] != lastSwitchVals[i]) {
 					ob = lastSwitchVals[i];
 					lastSwitchVals[i] = switchVals[i];
-					notifyListeners(omap_switch.get((byte)i), switchVals[i], ob);
+					notifyListeners(omap_switch.get((byte)(i+1)), switchVals[i], ob);
 				}
 			}
 
@@ -150,6 +149,14 @@ public class BastelControl extends LAPDevice {
 		byte[] msg = MSG_REQUESTSTATE.clone();
 		sendTo(0x00, 0x00, msg);
 	}
+	
+	public int[] getPwmVals() {
+		return pwmVals;
+	}
+	
+	public boolean[] getSwitchVals() {
+		return switchVals;
+	}
 
 	public void switchBastelAll(boolean state) {
 		switchBastelPrinter1(state);
@@ -171,6 +178,9 @@ public class BastelControl extends LAPDevice {
 		byte[] msg = MSG_SWITCH.clone();
 		msg[1] = SW_PRINTER_1;
 		msg[2] = (byte) (state ? 1 : 0);
+		
+		lastSwitchVals[0] = switchVals[0];
+		switchVals[0] = state;
 
 		sendTo(0x00, 0x00, msg);
 	}
@@ -179,6 +189,9 @@ public class BastelControl extends LAPDevice {
 		byte[] msg = MSG_SWITCH.clone();
 		msg[1] = SW_PRINTER_2;
 		msg[2] = (byte) (state ? 1 : 0);
+		
+		lastSwitchVals[1] = switchVals[1];
+		switchVals[1] = state;
 
 		sendTo(0x00, 0x00, msg);
 	}
@@ -187,6 +200,9 @@ public class BastelControl extends LAPDevice {
 		byte[] msg = MSG_SWITCH.clone();
 		msg[1] = SW_HELMER_1;
 		msg[2] = (byte) (state ? 1 : 0);
+		
+		lastSwitchVals[2] = switchVals[2];
+		switchVals[2] = state;
 
 		sendTo(0x00, 0x00, msg);
 	}
@@ -195,6 +211,9 @@ public class BastelControl extends LAPDevice {
 		byte[] msg = MSG_SWITCH.clone();
 		msg[1] = SW_HELMER_2;
 		msg[2] = (byte) (state ? 1 : 0);
+		
+		lastSwitchVals[3] = switchVals[3];
+		switchVals[3] = state;
 
 		sendTo(0x00, 0x00, msg);
 	}
@@ -203,6 +222,9 @@ public class BastelControl extends LAPDevice {
 		byte[] msg = MSG_SWITCH.clone();
 		msg[1] = SW_BANNER;
 		msg[2] = (byte) (state ? 1 : 0);
+		
+		lastSwitchVals[5] = switchVals[5];
+		switchVals[5] = state;
 
 		sendTo(0x00, 0x00, msg);
 	}
@@ -211,6 +233,9 @@ public class BastelControl extends LAPDevice {
 		byte[] msg = MSG_SWITCH.clone();
 		msg[1] = SW_ORGATABLE;
 		msg[2] = (byte) (state ? 1 : 0);
+		
+		lastSwitchVals[6] = switchVals[6];
+		switchVals[6] = state;
 
 		sendTo(0x00, 0x00, msg);
 	}
@@ -219,6 +244,9 @@ public class BastelControl extends LAPDevice {
 		byte[] msg = MSG_SWITCH.clone();
 		msg[1] = SW_WINDOW;
 		msg[2] = (byte) (state ? 1 : 0);
+		
+		lastSwitchVals[4] = switchVals[4];
+		switchVals[4] = state;
 
 		sendTo(0x00, 0x00, msg);
 	}
@@ -227,6 +255,9 @@ public class BastelControl extends LAPDevice {
 		byte[] msg = MSG_PWM.clone();
 		msg[1] = PWM_BANNER;
 		msg[2] = (byte) (value & 0xFF);
+		
+		lastPwmVals[1] = pwmVals[1];
+		pwmVals[1] = value; 
 
 		sendTo(0x00, 0x00, msg);
 	}
@@ -235,6 +266,9 @@ public class BastelControl extends LAPDevice {
 		byte[] msg = MSG_PWM.clone();
 		msg[1] = PWM_ORGATABLE;
 		msg[2] = (byte) (value & 0xFF);
+		
+		lastPwmVals[2] = pwmVals[2];
+		pwmVals[2] = value; 
 
 		sendTo(0x00, 0x00, msg);
 	}
@@ -243,7 +277,10 @@ public class BastelControl extends LAPDevice {
 		byte[] msg = MSG_PWM.clone();
 		msg[1] = PWM_WINDOW;
 		msg[2] = (byte) (value & 0xFF);
-
+		
+		lastPwmVals[0] = pwmVals[0];
+		pwmVals[0] = value;
+				
 		sendTo(0x00, 0x00, msg);
 	}
 

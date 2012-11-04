@@ -164,6 +164,9 @@ public class LoungeDimmer extends LAPDevice {
 		byte[] msg = MSG_SWITCH.clone();
 		msg[1] = OBJ_NEON;
 		msg[2] = (byte) (state ? 1 : 0);
+		
+		lastSwitchVals[3] = switchVals[3];
+		switchVals[3] = state; 
 
 		sendTo(0x00, 0x00, msg);
 		dimNeonTube(0x7F);
@@ -173,6 +176,9 @@ public class LoungeDimmer extends LAPDevice {
 		byte[] msg = MSG_SWITCH.clone();
 		msg[1] = OBJ_SPOTS_1;
 		msg[2] = (byte) (state ? 1 : 0);
+		
+		lastSwitchVals[0] = switchVals[0];
+		switchVals[0] = state;
 
 		sendTo(0x00, 0x00, msg);
 		dimSpot1(0x7F);
@@ -182,6 +188,9 @@ public class LoungeDimmer extends LAPDevice {
 		byte[] msg = MSG_SWITCH.clone();
 		msg[1] = OBJ_SPOTS_2;
 		msg[2] = (byte) (state ? 1 : 0);
+		
+		lastSwitchVals[1] = switchVals[1];
+		switchVals[1] = state;
 
 		sendTo(0x00, 0x00, msg);
 		dimSpot2(0x7F);
@@ -191,6 +200,9 @@ public class LoungeDimmer extends LAPDevice {
 		byte[] msg = MSG_SWITCH.clone();
 		msg[1] = OBJ_SPOTS_3;
 		msg[2] = (byte) (state ? 1 : 0);
+		
+		lastSwitchVals[2] = switchVals[2];
+		switchVals[2] = state;
 
 		sendTo(0x00, 0x00, msg);
 		dimSpot3(0x7F);
@@ -200,6 +212,9 @@ public class LoungeDimmer extends LAPDevice {
 		byte[] msg = MSG_PWM.clone();
 		msg[1] = OBJ_NEON;
 		msg[2] = (byte) (value & 0xFF);
+		
+		lastPwmVals[3] = pwmVals[3];
+		pwmVals[3] = value; 
 
 		sendTo(0x00, 0x00, msg);
 	}
@@ -208,6 +223,9 @@ public class LoungeDimmer extends LAPDevice {
 		byte[] msg = MSG_PWM.clone();
 		msg[1] = OBJ_SPOTS_1;
 		msg[2] = (byte) (value & 0xFF);
+		
+		lastPwmVals[0] = pwmVals[0];
+		pwmVals[0] = value; 
 
 		sendTo(0x00, 0x00, msg);
 	}
@@ -216,6 +234,9 @@ public class LoungeDimmer extends LAPDevice {
 		byte[] msg = MSG_PWM.clone();
 		msg[1] = OBJ_SPOTS_2;
 		msg[2] = (byte) (value & 0xFF);
+		
+		lastPwmVals[1] = pwmVals[1];
+		pwmVals[1] = value; 
 
 		sendTo(0x00, 0x00, msg);
 	}
@@ -224,6 +245,9 @@ public class LoungeDimmer extends LAPDevice {
 		byte[] msg = MSG_PWM.clone();
 		msg[1] = OBJ_SPOTS_3;
 		msg[2] = (byte) (value & 0xFF);
+		
+		lastPwmVals[2] = pwmVals[2];
+		pwmVals[2] = value; 
 
 		sendTo(0x00, 0x00, msg);
 	}
